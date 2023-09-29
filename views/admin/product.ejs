@@ -1,0 +1,284 @@
+
+<%- include("../layouts/adminheader")%>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <form action="/admin/addproduct" method="post" enctype="multipart/form-data"></form>
+                        <h2 class="content-title">Add New Product</h2>
+                        <div>
+                            <button form="product-form"  class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button  form="product-form"  class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/addproduct" method="post" enctype="multipart/form-data" id="product-form">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product Name</label>
+                                    <input type="text" name="productname"  class="form-control" id="product_name">
+                                    <p class="error-message" id="productnameError"></p>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea  name="description" class="form-control" rows="4"></textarea>
+                                    <p class="error-message" id="descriptionError"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Regular price</label>
+                                            <div class="row gx-2">
+                                                <input placeholder="$" name="productprice" type="text" class="form-control">
+                                                <p class="error-message" id="regularPriceError"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Promotional price</label>
+                                            <input placeholder="$" name="salesprice" type="text" class="form-control">
+                                            <p class="error-message" id="promotionalPriceError"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        
+                                    </div>
+                                </div>
+                        </div>
+                    </div> <!-- card end// -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Quantity</label>
+                                            <input type="text" placeholder="" name="quantity" class="form-control" id="product_name">
+                                            <p id="quantityError" class="error-message"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Color</label>
+                                            <input type="text" name="color" class="form-control" id="product_name">
+                                            <p id="colorError" class="error-message"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    
+                                </div>
+                           
+                        </div>
+                    </div> <!-- card end// -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Media</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-upload">
+                                <label class="form-label">Image</label>
+                                <input type="file" name="file" class="form-control" id="product_image" accept="image/*" multiple/>
+                                <p id="imageError" class="error-message"></p>
+                            </div>
+                        </div>
+                    </div> <!-- card end// -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Organization</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select name="categoryname" class="form-control" id="product_name">
+                                        <option value="" selected disabled>Select a category</option>
+                                        <% categories.forEach(category => { %>
+                                            <option value="<%= category.categoryname %>"><%= category.categoryname %></option>
+                                            
+                                        <% }); %>
+                                    </select>
+                                    <p id="categorynameError" class="error-message"></p>
+                                </div>
+                                
+                            </div> <!-- row.// -->
+                        </div>
+                        
+                </form>
+                </div>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script>
+    const form = document.getElementById('product-form');
+    const productNameInput = document.getElementById('product_name');
+    const descriptionInput = document.querySelector('textarea[name="description"]');
+    const productPriceInput = document.querySelector('input[name="productprice"]');
+    const salesPriceInput = document.querySelector('input[name="salesprice"]');
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const colorInput = document.querySelector('input[name="color"]');
+    const imageInput = document.querySelector('input[name="file"]');
+    const categoryInput = document.querySelector('select[name="categoryname"]');
+
+    // Function to validate the product name
+    function validateProductName() {
+        const productName = productNameInput.value.trim();
+        if (productName === '') {
+            document.getElementById('productnameError').textContent = 'Product name is required.';
+            return false;
+        }
+        return true;
+    }
+
+    // Function to validate the description
+    function validateDescription() {
+        const description = descriptionInput.value.trim();
+        if (description === '') {
+            document.getElementById('descriptionError').textContent = 'Description is required.';
+            return false;
+        }
+        return true;
+    }
+
+
+function validateProductPrice() {
+    const productPrice = productPriceInput.value.trim();
+    if (productPrice === '') {
+        document.getElementById('regularPriceError').textContent = 'Regular price is required.';
+        return false;
+    }
+    if (isNaN(productPrice) || parseFloat(productPrice) < 0) {
+        document.getElementById('regularPriceError').textContent = 'Regular price must be a non-negative number.';
+        return false;
+    }
+    
+    return true;
+}
+
+    
+    function validateSalesPrice() {
+    const salesPrice = salesPriceInput.value.trim();
+   
+    if (salesPrice === '') {
+        document.getElementById('promotionalPriceError').textContent = 'promotional price is required.';
+        return false;
+    }
+
+    if (salesPrice !== '' && parseFloat(salesPrice) < 0) {
+        document.getElementById('promotionalPriceError').textContent = 'Promotional price must be a non-negative number.';
+        return false;
+    }
+    return true;
+}
+
+    function validateQuantity() {
+        const quantity = quantityInput.value.trim();
+        if (quantity === '') {
+            document.getElementById('quantityError').textContent = 'Quantity is required.';
+            return false;
+        }
+        return true;
+    }
+    function validateColor() {
+        const color = colorInput.value.trim();
+        if (color === '') {
+            document.getElementById('colorError').textContent = 'Color is required.';
+            return false;
+        }
+        return true;
+    }
+
+    function validateImage() {
+        const files = imageInput.files;
+        if (files.length === 0) {
+            document.getElementById('imageError').textContent = 'Image is required.';
+            return false;
+        }
+
+        return true;
+    }
+    function validateCategory() {
+        const category = categoryInput.value;
+        if (category === '') {
+            document.getElementById('categorynameError').textContent = 'Category is required.';
+            return false;
+        }
+        return true;
+    }
+    form.addEventListener('submit', function (event) {
+        // Reset error messages
+        document.getElementById('productnameError').textContent = '';
+        document.getElementById('descriptionError').textContent = '';
+        document.getElementById('regularPriceError').textContent = '';
+        document.getElementById('quantityError').textContent = '';
+        document.getElementById('colorError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('categorynameError').textContent = '';
+
+        // Perform validation
+        const isValidProductName = validateProductName();
+        const isValidDescription = validateDescription();
+        const isValidProductPrice = validateProductPrice();
+        const isValidSalesPrice = validateSalesPrice();
+        const isValidQuantity = validateQuantity();
+        const isValidColor = validateColor();
+        const isValidImage = validateImage();
+        const isValidCategory = validateCategory();
+
+        // Prevent form submission if validation fails
+        if (!isValidProductName || !isValidDescription || !isValidProductPrice || !isValidSalesPrice || !isValidQuantity || !isValidColor || !isValidImage || !isValidCategory) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+    <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/admin-assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>

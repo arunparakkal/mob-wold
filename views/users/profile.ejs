@@ -1,0 +1,68 @@
+<%- include("../layouts/header")%>
+
+
+<!-- content -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-xl-3">
+        <nav class="nav flex-lg-column w-100 d-flex nav-pills mb-4">
+          <a class="nav-link my-0 bg-light" href="/addresses"><p class="pb-0 mb-0" style="width: 100px">Addresses</p></a>
+        
+          <a class="nav-link my-0 bg-light" href="#"><p class="pb-0 mb-0" style="width: 100px">Orders history</p></a>
+         
+          <a class="nav-link my-0 bg-light" href="#"><p class="pb-0 mb-0" style="width: 100px">Transactions</p></a>
+         
+          <a class="nav-link my-0 bg-light" href="#"><p class="pb-0 mb-0" style="width: 100px">Log out</p></a>
+        </nav>
+      </div>
+      <main class="col-lg-9 col-xl-9">
+        <div class="card p-4 mb-0 shadow-0 border">
+          <div class="content-body">
+            <div class="d-flex align-items-center">
+
+              <div class="me-3">
+                <% if(user&& user.image) {%>
+                  <img src="/userProfile/<%= user.image%>" class="rounded-circle" style="height: 60px; width: 60px;">
+                
+                <% }else{ %>
+                <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/avatars/avatar.webp" class="rounded-circle" style="height: 60px; width: 60px;" />
+                <% } %>
+              </div>
+              <div class="pt-2">
+              
+                <h6 class="pt-2">Mr.<%= user.name %></h6>
+               
+
+                <p>
+                 Email:<%= user.email %> <br>
+                 Phone:<%= user.mobile %>
+                  <a href="#" class="px-2"><i class="fa fa-pen"></i></a>
+                </p>
+               
+                <a href="/editprofile?user=<%= user._id %>" class="btn-icon"> Edit</a>
+              </div>
+            </div>
+
+            <hr />
+
+            
+
+            <a href="address" class="btn btn-light border"> <i class="me-2 fa fa-plus"></i> Add new address </a>
+
+            <hr class="my-4" />
+
+            <h5 class="mb-3">Your orders</h5>
+            
+            
+          </div>
+        </div>
+      </main>
+    </div>
+
+  </div>
+</section>
+<!-- content -->
+
+
+<%- include("../layouts/footer")%>
