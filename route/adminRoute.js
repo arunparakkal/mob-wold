@@ -2,6 +2,24 @@ const express = require("express")
 const admin_route = express()
 
 
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) =>{
+        cb(null, 'public/uploadCategory');
+    },filename:(req, file, cb) =>{
+        // console.log('data file getting')
+    const originalname = file.originalname;
+    const extname = path.extname(originalname);
+    const basename = path.basename(originalname);
+    const filename = `${Date.now()}-${basename}${extname}`;
+    
+    cb(null, filename);
+    }
+})
+const upload = multer({storage})
+
 const session = require("express-session")
 admin_route.use(session({
     secret:process.env.SESSION_SECRETE,
@@ -32,6 +50,7 @@ admin_route.get("/userlist",adminController.loadUser)
  admin_route.get("/category",categoryController.loadCategory)
  admin_route.post("/addcategory",categoryUpload.single("file"),categoryController.addCategory)
  admin_route.get("/editcategory",categoryController.editCategory)
+ admin_route.post("/editcategory",upload.single("image"),categoryController.updateCategory)
  admin_route.get("/addproduct",productController.addProduct)
  admin_route.post("/addproduct",uploadProduct.array("file"),productController.createProduct)
  admin_route.get("/products",productController.products)

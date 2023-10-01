@@ -70,20 +70,20 @@
                 <div class="card-body">
                     <h4 class="card-title mb-4">Edit profile</h4>
                     <form method="post" action="editcategory" enctype="multipart/form-data">
-                       
-                       
+                      
+                       <input type="hidden" name="userId" value="<%= userId %>">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                          
-                            <input class="form-control" name="categoryname" placeholder="Your Name" type="text">
+                        
+                            <input class="form-control" name="categoryname" placeholder="category Name" type="text" value="<%= category.categoryname %>">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input class="form-control" name=" description" placeholder="Your email" type="text" >
+                            <label class="form-label">description</label>
+                            <input class="form-control" name="description" placeholder="Your description" type="text" value="<%= category.description %>">
                         </div> <!-- form-group// -->
                          <!-- form-group// --> <div class="mb-3">
                             <label class="form-label">image</label>
-                            <input class="form-control" name="image" placeholder="Your image" type="file" >
+                            <input class="form-control" name="image" placeholder="category image" type="file" >
                         </div> <!-- form-group// -->
                        <!-- form-group// -->
  

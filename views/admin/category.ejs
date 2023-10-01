@@ -132,6 +132,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                    
                                         <% categories.forEach((category, index)=>{ %>
                                             <tr>
                                               
@@ -141,11 +142,12 @@
                                               <td><%= category.categoryname %></td>
                                               <td><%= category.description %></td>
                                               <td>
-                                                <a href="editcategory" class="btn btn-info p-1">Edit</a>
+                                            
+                                                <a href="editcategory?userId=<%= category._id %>" class="btn btn-info p-1">Edit</a>
                                                 <!-- <a href="delete/<%= category._id %>" class="btn btn-info p-1">Delete</a> -->
                                                 
                                                     <a href="" class="btn btn-danger p-1">Unlist</a>
-                                              
+                                                
                                                     <a href="" class="btn btn-success p-1">List</a>
                                               
                                                 

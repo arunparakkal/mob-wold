@@ -3,15 +3,15 @@ const cropImage = require("../multer/categoryimagecrop")
 module.exports = {
 
     loadcategory: async(req,res)=>{ try{
-        const categories = await Category.find()
-    
-        res.render("category",{categories})
+        const userId = req.query.id
+         const categories = await Category.find()
+        res.render("category",{categories, userId})
     }
     catch(error){
         console.log(error.message);
     }
 },
-addcategory: async(req,res, err)=>{
+addcategory: async(req,res)=>{
     try{
         
         await cropImage.crop(req)
@@ -25,18 +25,11 @@ addcategory: async(req,res, err)=>{
        })
        
        const saveCategory = await newCategory.save()
-    
-       res.redirect("/admin/category")
+       const userId = saveCategory._id;
+       res.redirect(`/admin/category?id=${userId}`)
     }
     catch(error){
-        console.log("error catch");
-        if (error instanceof multer.MulterError) {
-            // Render the category page with an error message
-            return res.render('category', { error: 'Invalid file type. Only images are allowed.' });
-          }
-      
-          // Handle other errors as needed
-          res.status(500).send('Internal server error');
+        console.log(error.message);
     }
 }
 }
