@@ -56,4 +56,6 @@ userRoute.post("/address",UserController.insertData)
 userRoute.get('/addresses',auth.isLogin,UserController.LoadAllAddress)
 userRoute.get("/cart",UserController.LoadCart)
 userRoute.post("/addtocart",UserController.AddtoCart)
+userRoute.get("/checkout",UserController.Checkout)
+userRoute.get("/default",UserController.Default)
 module.exports = userRoute

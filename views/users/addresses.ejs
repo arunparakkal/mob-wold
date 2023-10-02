@@ -1,7 +1,7 @@
 <%- include('../layouts/header') %>
 <div class="container">
   <div class="row">
-    <% if(typeof addresData !== "undefined"){%>
+    <% if(addresData){%>
     <% addresData.addresses.forEach((address) => {  %>
      
     <div class="card ml-5" >
@@ -16,8 +16,16 @@
         <p class="card-text">Stae :<%= address.state %></p>
         <p class="card-text">PinCode :<%= address.postalCode %></p>
         <p class="card-text"> Country :<%= address.country %></p>
-      
-        <button type="button" class="btn btn-primary">Button</button>
+        <% if(address.isDefault== true){ %>
+          <a href="/default?addressId=<%= address._id %>">
+            <button type="button" class="btn btn-success" id="default"> Default</button>
+          </a>
+       <% }else{ %>
+          <a href="/default?addressId=<%= address._id %>">
+            <button type="button" class="btn btn-primary" id="default">make to Default</button>
+          </a>
+       <% } %>
+               
         <button type="button" class="btn btn-primary">Edit</button>
         <button type="button" class="btn btn-primary">delete</button>
       </div>
@@ -28,5 +36,7 @@
    <% }%>
   </div>
 </div>
-
+<script>
+ 
+</script>
 <%- include('../layouts/footer') %>

@@ -29,7 +29,9 @@ const editCategory = async(req,res)=>{
 }
 const updateCategory = async(req,res)=>{
     try{
+
        const {categoryname,description} = req.body
+       console.log(req.body);
        const userId = req.body.userId;
       if(req.file){
         const image = req.file.filename

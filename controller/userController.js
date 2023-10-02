@@ -125,14 +125,14 @@ const verifyLogin = async(req,res)=>{
         const password = req.body.password
        
         const userData = await User.findOne({email:email})
-        if(userData)
+        
         if(userData){
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
                if(userData.is_verified == 0){
                 res.render("users/login",{message:"user not verified please verify"})
                }else{
-                
+               
                 req.session.user_id = userData._id
              
                 req.session.isLoggedIn = true;
@@ -203,16 +203,15 @@ const updateUser = async(req,res)=>{
 }
 const LoadAddress = async(req,res)=>{
     try{
-        res.render("users/address")
+        res.render("users/address",{user:req.session.userId})
     }
     catch(error){
         console.log(error.message);
     }
 }
-const insertData = async(req,res)=>{
+const   insertData = async(req,res)=>{
     try{
        
-    
         const {name,mobile,address1,address2,state,postalCode, country} = req.body
         const userAddress = await Address.findOne({userId:req.session.user_id})
        const address ={
@@ -224,9 +223,8 @@ const insertData = async(req,res)=>{
             state:state,
             postalCode :postalCode,
             country:country
- 
-        
-       }
+
+          }
     
        if(!userAddress || (userAddress && userAddress.addresses.length < 1)){
         const newAddress = new Address({
@@ -241,8 +239,12 @@ const insertData = async(req,res)=>{
         userAddress.addresses.push(address)
         userAddress.save()
        }
-       
-        res.render("users/address")
+       if(req.body.add == "scre" ){
+      
+        res.redirect("/checkout")
+       }else{
+        res.redirect("/address")
+       }
     }
     catch(error){
         console.log(error.message);
@@ -253,8 +255,10 @@ const LoadAllAddress = async(req,res)=>{
     try{
      
         const addresData = await Address.findOne({userId:req.session.user_id})
-       
-        res.render('users/addresses',{addresData})
+    
+   
+        res.render('users/addresses',{addresData,user:req.session.user_id})
+        
 
     }catch(error){
         console.log(error.message);
@@ -263,8 +267,8 @@ const LoadAllAddress = async(req,res)=>{
 const LoadCart = async(req,res)=>{
     try{
         const cart = await Cart.findOne({userId:req.session.user_id}).populate('products.productId')
-        console.log(cart);
-        res.render("users/cart",{cart})
+       
+        res.render("users/cart",{cart,user:req.session.user_id})
     }
     catch(error){
         console.log(error.message);
@@ -275,7 +279,7 @@ const AddtoCart = async(req,res)=>{
         const {productId,quantity}= req.body
       
        const productData = await product.findOne({_id:req.body.productId})
-       console.log(productData.salesprice);
+       
       
        let cart = await Cart.findOne({userId:req.session.user_id})
      
@@ -289,7 +293,7 @@ const AddtoCart = async(req,res)=>{
         return product.productId.toString() === productId
 
        })
-       console.log(productIndex);
+      
 
        if(productIndex !== -1){
         cart.products[productIndex].quantity+=quantity
@@ -324,28 +328,47 @@ const AddtoCart = async(req,res)=>{
         console.log(error.message);
     }
 }
-
-
+const Checkout = async(req,res)=>{
+    try{
+        const sec = "scre"
+        
+       res.render("users/checkout",{sec,user:req.session.user_id})
+        
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const Default = async(req,res)=>{
+    try{
+        const addId = req.query.addressId
+        const user = await Address.findOne({userId:req.session.user_id})  
+        if(!user){
+            console.log("user not login");
+            res.render('users/login')
+        }
+        user.addresses = user.addresses.map((val)=>{
+            val.isDefault = false
+            return val
+            })
+      const updateData = user.addresses.find((add)=>{
+    
+        return  add._id.toString() === addId
+      })
+   
+    updateData.isDefault = true   
+    await user.save()
+       res.redirect('/addresses')
+    }
+    catch(error){
+        console.log(error.message)
+    }
+} 
 
 module.exports = {
 LoadHome,
 loadsignUp,
 inserUser,
-otppage,
-VerifyOtp,
-loadLogin,
-verifyLogin,
-LoadHomee,
-loadShop,
-Logout,
-loadprofile,
-editProfile,
-updateUser,
-LoadAddress,
-insertData,
-LoadAllAddress,
-LoadCart,
-AddtoCart,
-recentOpt,
+otppage,VerifyOtp,loadLogin,verifyLogin,LoadHomee,loadShop,Logout,loadprofile,editProfile,updateUser,LoadAddress,insertData,LoadAllAddress,LoadCart,AddtoCart,recentOpt,Checkout,Default
 
 }

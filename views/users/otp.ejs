@@ -119,7 +119,7 @@
             generateOTP(); // Start OTP generation and expiration countdown
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                console.log("entered");
+              
                 if (isOTPExpired()) {
                     alert("OTP has expired. Please request a new OTP.");
                     // You can add additional logic here, such as resending OTP or redirecting.
@@ -141,7 +141,7 @@
     resendOtpLink.addEventListener("click", function (event) {
         
         event.preventDefault(); // Prevent the default anchor link behavior
-        console.log("hello world");
+      
         // Your POST request logic here
         fetch("/register", {
             method: "POST",

@@ -90,7 +90,7 @@ module.exports = {
             // if (existEmail) {
             //   return res.render("users/siginup",{ message: "Email already exists." });
             // }
-            console.log(" im in");
+          
             const user= new User({
                 name:req.body.name,
                 email:req.body.email,
@@ -149,7 +149,7 @@ module.exports = {
                 const id = req.body.userId.trim()
         
               const udpateinfo = await User.updateOne({_id:id} , {$set:{is_verified:1}})
-              console.log(udpateinfo);
+              
              
                res.redirect("/")
             }

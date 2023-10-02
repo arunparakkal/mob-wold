@@ -93,25 +93,27 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form action="/admin/addcategory"method="post" enctype="multipart/form-data">
+                            <form action="/admin/addcategory"method="post" enctype="multipart/form-data"n id="categoryForm">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Category Name</label>
-                                    <input type="text" name="categoryname" placeholder="Type here" class="form-control" id="category_name" />
+                                    <input type="text" name="categoryname" placeholder="Type here" class="form-control" id="category_name" required />
                                     <p id="categoryNameError" class="error-message"></p>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" name="description" class="form-control"></textarea>
+                                    <label class="form-label"  >Description</label>
+                                    <textarea placeholder="Type here" name="description" class="form-control" required></textarea>
                                     <p id="descriptionError" class="error-message"></p>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Image</label>
-                                    <input type="file" name="file" class="form-control" id="category_image" accept="image/*" />
-                               
+                                    <input type="file" name="file" class="form-control" id="category_image" accept="image/*" required/>
+                                    <p style="color: red;" id="imageError" class="error-message"></p>
                                 </div>
+                              
                                 <div class="d-grid">
                                     <button class="btn btn-primary"type="submit">Create category</button>
                                 </div>
+                              
                             </form>
                         </div>
                         <div class="col-md-9">
@@ -143,7 +145,7 @@
                                               <td><%= category.description %></td>
                                               <td>
                                             
-                                                <a href="editcategory?userId=<%= category._id %>" class="btn btn-info p-1">Edit</a>
+                                                <a href="editcategory?userId=<%= category._id ,%>" class="btn btn-info p-1">Edit</a>
                                                 <!-- <a href="delete/<%= category._id %>" class="btn btn-info p-1">Delete</a> -->
                                                 
                                                     <a href="" class="btn btn-danger p-1">Unlist</a>
@@ -168,7 +170,28 @@
                 </div> <!-- card body .// -->
             </div> <!-- card .// -->
         </section> <!-- content-main end// -->
-
+  <script>
+    document.getElementById("category_image").addEventListener("change" ,function(){
+        const fileInput = this;
+        const errorElement = document.getElementById('imageError')
+        errorElement.textContent = ""
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
+        if(fileInput.files.length >0){
+            const selectFleType = fileInput.files[0].type;
+            if(!allowedTypes.includes(selectFleType)){
+                errorElement.textContent = "Invalid file type,Add Images"
+                const value = "invalid"
+            }
+        }
+    })
+    document.getElementById("categoryForm").addEventListener("submit", function (event) {
+    const errorElement = document.getElementById('imageError');
+    if (errorElement.textContent !== '') {
+      // An error message is displayed, prevent form submission
+      event.preventDefault();
+    }
+  });
+  </script>
         
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

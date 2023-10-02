@@ -22,7 +22,7 @@ const loadUser = async(req,res)=>{
     try{
         
         const users = await User.find()
-        console.log(users);
+       
         res.render("users",{users})
     }
     catch(error){

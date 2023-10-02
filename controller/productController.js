@@ -61,7 +61,7 @@ const productDetail = async(req, res)=>{
        
         const product = await Product.findById(productId)
         
-        res.render('users/productdetail',{product})
+        res.render('users/productdetail',{product,user:req.session.user_id})
 
     }catch(error){
         console.log(error.message)

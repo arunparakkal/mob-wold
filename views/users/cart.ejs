@@ -46,8 +46,8 @@
                                     <input type="text" value="<%= product.quantity %>">
                                 </div>
                             </td>
-                            <td class="cart__total">$<%= product.price %> </td>
-                            <td class="cart__total">$<%= product.subTotal %> </td>
+                            <td class="cart__total">&#8377;<%= product.price %> </td>
+                            <td class="cart__total">&#8377;<%= product.subTotal %> </td>
                             <td class="cart__close"><span class="icon_close"></span></td>
                         </tr>
                         <% }) %>
@@ -83,10 +83,10 @@
               <div class="cart__total__procced">
                   <h6>Cart total</h6>
                   <ul>
-                      <li>Subtotal <span><%= cart.cartSubtotal %></span></li>
-                      <li>Total <span>$<%= cart.cartTotal %></span></li>
+                      <li>Subtotal <span>&#8377;<%= cart.cartSubtotal %></span></li>
+                      <li>Total <span>&#8377;<%= cart.cartTotal %></span></li>
                   </ul>
-                  <a href="#" class="primary-btn">Proceed to checkout</a>
+                  <a href="checkout" class="primary-btn">Proceed to checkout</a>
               </div>
           </div>
       </div>
