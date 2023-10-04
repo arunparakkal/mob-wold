@@ -54,4 +54,6 @@ admin_route.get("/userlist",adminController.loadUser)
  admin_route.get("/addproduct",productController.addProduct)
  admin_route.post("/addproduct",uploadProduct.array("file"),productController.createProduct)
  admin_route.get("/products",productController.products)
+ admin_route.get("/list",categoryController.List)
+ admin_route.get("/unlist",categoryController.Unlist)
 module.exports = admin_route

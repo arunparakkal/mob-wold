@@ -1,4 +1,5 @@
 <%- include("../layouts/header")%>  
+<link rel="stylesheet" type="text/css" href="/public/css/btn.css">
 <!-- Breadcrumb Begin -->
 <div class="breadcrumb-option">
   <div class="container">
@@ -25,59 +26,76 @@
         
       </div>
 
-      <form method="post" action="address"  class="checkout__form">
-        <input type="hidden" name="add" value="<%= sec %>">
+      <form method="" action=""  class="checkout__form">
+       
+       <input type="hidden" name="call" value="calll" >
           <div class="row">
+            
               <div class="col-lg-8">
-                  <h5>Billing detail</h5>
-                 
+                <div class="col-lg-8">
+                
+
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <h5>Billing detail</h5>
+                </div>
+                <div class="col-lg-4" style="text-align: center;">
+                    <a href="/checkoutaddadress" class="black-button" style="margin-left: 100px; background-color: #000000; color: #FFFFFF; padding: 10px; text-decoration: none; display: inline-block;">Add Address</a>
+                </div>
+                <div class="col-lg-4" style="text-align: right;">
+                    <a href="/addresses" class="black-button" style="background-color: #000000; color: #FFFFFF; padding: 10px; text-decoration: none; display: inline-block;">Manage Address</a>
+                </div>
+            </div>
+            
+            
+                
                   <div class="row">
-                   
-                      
                       <div class="col-lg-6 col-md-6 col-sm-6">
                           <div class="checkout__form__input">
                               <p> Name <span>*</span></p>
-                              <input  name="name" type="text">
+                              <input  name="name" type="text" value="<%=defaultAddress.Name %>">
                           </div>
                       </div>
                       <div class="col-lg-12">
                           <div class="checkout__form__input">
                               <p>Phone <span>*</span></p>
-                              <input  name="mobile" type="number">
+                              <input  name="mobile" type="number"  value="<%=defaultAddress.Number %>">
                           </div>
                           <div class="checkout__form__input" >
                               <p>Address 1<span>*</span></p>
-                              <input type="text" name="address1" placeholder=" street Apartment. suite, unite ect ( optinal )">
+                              <input type="text" name="address1" placeholder=" street Apartment. suite, unite ect ( optinal )"  value="<%=defaultAddress.addressLine1 %>" >
                           </div>
                           <div class="checkout__form__input">
                             <p>Address 2<span>*</span></p>
                             
-                            <input type="text"  name="address2" placeholder=" street Apartment. suite, unite ect ( optinal )">
+                            <input type="text"  name="address2" placeholder=" street Apartment. suite, unite ect ( optinal )"  value="<%=defaultAddress.addressLine2 %>">
                         </div>
                           <div class="checkout__form__input" >
                               <p>State <span>*</span></p>
-                              <input name="state" type="text">
+                              <input name="state" type="text"  value="<%=defaultAddress.state %>">
                           </div>
                           <div class="checkout__form__input" >
                               <p>Pincode <span>*</span></p>
-                              <input   name="postalCode" type="number">
+                              <input   name="postalCode" type="number"  value="<%=defaultAddress.postalCode %>">
                           </div>
                       </div>
                      
                       <div class="col-lg-6 col-md-6 col-sm-6">
                           <div class="checkout__form__input">
                               <p>Contry <span>*</span></p>
-                              <input  name="country" type="text">
+                              <input  name="country" type="text"  value="<%=defaultAddress.country %>">
                           </div>
                       </div>
-                      <button type="submit" class="btn btn-primary w-100"> Edit </button>
+                     
                       </div>
                    
                   </div>
-               </form>
+               
              
                   <div class="col-lg-4">
-                    <form action="">
+                  
                       <div class="checkout__order">
                           <h5>Your order</h5>
                           <div class="checkout__order__product">
@@ -86,17 +104,18 @@
                                       <span class="top__text">Product</span>
                                       <span class="top__text__right">Total</span>
                                   </li>
-                                  <li>01. Chain buck bag <span>$ 300.0</span></li>
-                                  <li>02. Zip-pockets pebbled<br /> tote briefcase <span>$ 170.0</span></li>
-                                  <li>03. Black jean <span>$ 170.0</span></li>
-                                  <li>04. Cotton shirt <span>$ 110.0</span></li>
+                                  <% cart.products.forEach(cartItem => { %>
+                                    
+                                    <li><%= cartItem.productId.productname  %>&#215;<%= cartItem.quantity%> <span>&#8377; <%= cartItem.price.toFixed(2) %></span></li>
+                                <% }) %>
+                                
                               </ul>
                           </div>
                           <div class="checkout__order__total">
-                              <ul>
-                                  <li>Subtotal <span>$ 750.0</span></li>
-                                  <li>Total <span>$ 750.0</span></li>
-                              </ul>
+                            <ul>
+                                <li>Subtotal <span>&#8377; <%= cart.cartSubtotal.toFixed(2) %></span></li>
+                                <li>Total <span>&#8377; <%= cart.cartTotal.toFixed(2) %></span></li>
+                            </ul>
                           </div>
                           <div class="checkout__order__widget">
                               <label for="o-acc">
@@ -107,7 +126,7 @@
                               <p>Create am acount by entering the information below. If you are a returing customer
                               login at the top of the page.</p>
                               <label for="check-payment">
-                                  Cheque payment
+                                  Cash ON delivery
                                   <input type="checkbox" id="check-payment">
                                   <span class="checkmark"></span>
                               </label>
@@ -123,9 +142,33 @@
                 </form>
               </div>
         
-      </div>
+      </div>   
   </section>
   <!-- Checkout Section End -->
+<!-- Add this script block to your checkout.ejs file -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+       const button = document.querySelector(".site-btn");
 
- 
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            // Use Fetch to submit the form data to your server and handle the response
+            fetch("/place-order", {
+                method: "POST",
+                body: new FormData(form),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Redirect to the order-placed page
+                window.location.href = "/order-placed";
+            })                                     
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+        });
+    });
+</script>
+
 <%- include("../layouts/footer")%>  

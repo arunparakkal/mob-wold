@@ -1,0 +1,17 @@
+/* Define the styles for the black button */
+.black-button {
+  display: inline-block;
+  padding: 10px 20px; /* Adjust the padding as needed */
+  background-color: #000; /* Full black background color */
+  color: #fff; /* White text color */
+  text-decoration: none; /* Remove underline for links */
+  border-radius: 5px; /* Add rounded corners */
+  font-weight: bold; /* Make the text bold */
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+}
+
+/* Change the button background color on hover */
+.black-button:hover {
+  background-color: #333; /* Darker shade of black on hover */
+  /* You can also change text color, add shadows, or other effects here */
+}

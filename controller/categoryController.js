@@ -1,6 +1,7 @@
 const categoryHelper = require("../helper/categoryHelper");
 const Category = require("../model/categoryModel");
-
+const product = require("../model/product");
+const Product = require('../model/product')
 const loadCategory = async(req,res)=>{
     try{
         await categoryHelper.loadcategory(req,res)
@@ -46,4 +47,34 @@ const updateCategory = async(req,res)=>{
     }
     
 }
-module.exports = {loadCategory, addCategory,editCategory,updateCategory}
+const List = async(req,res)=>{
+    try{
+    const categoryData = await Category.findOne({_id:req.query.categoryId})
+    const UpdateCategory = await Category.updateOne({_id:req.query.categoryId},{$set:{active:true}})
+   
+    const categoryName = categoryData.categoryname;
+    const productData = await Product.findOne({ categoryname: categoryName });
+    const updatproisList = await Product.updateOne({_id:productData._id},{$set:{isListed:true}})
+    res.redirect("/admin/category")
+   
+  }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const Unlist = async(req,res)=>{
+    try{
+    
+    const categoryData = await Category.findOne({_id:req.query.categoryId})
+    const UpdateCategory = await Category.updateOne({_id:req.query.categoryId},{$set:{active:false}})
+   
+    const categoryName = categoryData.categoryname;
+    const productData = await Product.findOne({ categoryname: categoryName });
+    const updatproisList = await Product.updateOne({_id:productData._id},{$set:{isListed:false}})
+    res.redirect("/admin/category")
+  }
+    catch(error){
+        console.log(error.message);
+    }
+}
+module.exports = {loadCategory, addCategory,editCategory,updateCategory,List,Unlist }

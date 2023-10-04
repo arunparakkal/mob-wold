@@ -12,8 +12,50 @@ const express = require("express")
 const session = require("express-session")
 
 
-
+const objj = {}
 //load home
+const passwordHash=  async(password)=>{
+    try{
+        hashedPassword = await bcrypt.hash(password,10)
+        return hashedPassword
+
+    }
+    catch(Error){
+        console.log(Error.message);
+    }
+}
+const sendVerifyMail = async(name,email,otp)=>{
+    try{
+        const transporter = nodemailer.createTransport({
+            host:"smtp.gmail.com",
+            port:587,
+            secure:false,
+            requireTLS:true,
+            auth:{
+                user:"arunaru0034@gmail.com",
+                pass:"mlfxkmzrmyauvbml"
+            }
+        }) 
+        const mailOption = {
+            from:"arunaru0034@gmail.com",
+            to:email,
+            subject:"For verification mail",
+            html:'<p>Hyy '+name+" "+"this is your verify opt " +"  "+  otp+' "</p>'
+            
+        }
+        transporter.sendMail(mailOption,function(error,info){
+            if(error){
+
+            }else{
+                console.log("Email has been send :-" ,info.response);
+            }
+        })
+        
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
 const LoadHome = async(req,res)=>{
     try{
         
@@ -54,9 +96,10 @@ const LoadHomee = async(req,res)=>{
 
 // signup page
 const loadsignUp = async(req,res)=>{
-    try{
-    await userHelper.loadingsinup(req,res)
-    }
+     try{
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+            res.render("users/siginup")
+        }
     catch(error){
         console.log(error.message)
        
@@ -65,19 +108,48 @@ const loadsignUp = async(req,res)=>{
 
 //user insert
 const inserUser = async(req,res)=>{
-    try{
-        
-        await userHelper.insertuser(req,res)
+    try{          
+        const Spassword = await passwordHash(req.body.password)   
+        // const existEmail = await User.findOne({ email: req.body.email });
+        // if (existEmail) {
+        //   return res.render("users/siginup",{ message: "Email already exists." });
+        // }
+      
+        const user= new User({
+            name:req.body.name,
+            email:req.body.email,
+            mobile:req.body.mobile,
+            password:Spassword,
+            is_admin:0
+
+        })
+        const userData = await user.save()
+
+       if(userData){
+        const otp = randomString.generate({length:4,charset:"numeric"})
+       objj.OTP = otp
+      console.log(objj.OTP)
+       await sendVerifyMail(req.body.name,req.body.email,otp)
+       res.redirect(`/otp?id=${userData._id} `); 
+       }
+       else{
+        res.render("siginup",{message:"your registerarion Failed"})
+       }
     }
     catch(error){
         console.log(error.message);
     }
 }
 const recentOpt = async(req,res)=>{
-    try{
-        
-        await userHelper.recentopt(req,res)
-    }
+    try{           
+        const userId = req.query.userId.trim(); 
+         const otp = randomString.generate({length:4,charset:"numeric"})
+        objj.OTP = otp
+        console.log("recent",objj.OTP); 
+        await sendVerifyMail(req.body.name,req.body.email,otp)
+        const userData = await User.findOne({ _id: userId });
+        res.redirect(`otp?id=${userData._id}`); 
+     }
     catch(error){
         console.log(error.message);
     }
@@ -85,11 +157,10 @@ const recentOpt = async(req,res)=>{
 
 //otp page loader
 const otppage = async (req, res) => {
-  try{
-    
-   await userHelper.loadOtp(req,res)
-  
-  }
+    try{
+         
+        res.render("users/otp",{userId:req.query.id})
+    }
   catch(error){
     console.log(error.message);
   }
@@ -98,8 +169,25 @@ const otppage = async (req, res) => {
 //otp verification
 const VerifyOtp = async(req,res)=>{
     try{
+        const formdata = req.body.otp1
+        console.log("Received form data:", formdata);
+        const otp1 = req.body.otp1;
+        const otp2 = req.body.otp2;
+        const otp3 = req.body.otp3;
+        const otp4 = req.body.otp4;
+        const Newopt =otp1+otp2+otp3+otp4
+        console.log("newOtp :-" ,Newopt);
+        
       
-        await userHelper.Verifyotp(req,res)
+        if(objj.OTP === Newopt){
+            delete objj.OTP
+            const id = req.body.userId.trim()
+    
+          const udpateinfo = await User.updateOne({_id:id} , {$set:{is_verified:1}})
+          
+         
+           res.redirect("/")
+        }
     }
     catch(error){
         console.log(error.message);
@@ -110,7 +198,7 @@ const VerifyOtp = async(req,res)=>{
 
 const loadLogin = async(req,res)=>{
     try{
-        await userHelper.loadlogin(req,res)
+        res.render("users/login")
     }
     catch(error){
         console.log(error.message);
@@ -243,7 +331,7 @@ const   insertData = async(req,res)=>{
       
         res.redirect("/checkout")
        }else{
-        res.redirect("/address")
+        res.redirect("/addresses")
        }
     }
     catch(error){
@@ -267,7 +355,6 @@ const LoadAllAddress = async(req,res)=>{
 const LoadCart = async(req,res)=>{
     try{
         const cart = await Cart.findOne({userId:req.session.user_id}).populate('products.productId')
-       
         res.render("users/cart",{cart,user:req.session.user_id})
     }
     catch(error){
@@ -328,11 +415,26 @@ const AddtoCart = async(req,res)=>{
         console.log(error.message);
     }
 }
-const Checkout = async(req,res)=>{
+
+const Checkoutaddress = async(req,res)=>{
     try{
         const sec = "scre"
         
-       res.render("users/checkout",{sec,user:req.session.user_id})
+       res.render("users/addressplace",{sec,user:req.session.user_id})
+        
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const Checkout = async(req,res)=>{
+    try{
+    const cart = JSON.parse(req.query.cart)
+   
+        const AddresData = await Address.find({userId:req.session.user_id})
+       const UserAddress = await AddresData[0].addresses
+        const defaultAddress = UserAddress.find(address =>address.isDefault == true )
+       res.render("users/checkout",{cart,defaultAddress, user:req.session.user_id})
         
     }
     catch(error){
@@ -364,11 +466,43 @@ const Default = async(req,res)=>{
         console.log(error.message)
     }
 } 
-
+const Changepassword = async(req,res)=>{
+    try{
+        
+        res.render("users/pwdupdate")
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const addPassword = async(req,res)=>{
+    try{
+        const{password,npassword,rpasword} = req.body    
+        const userData = await User.findOne({_id:req.session.user_id})
+        const checkpassword = await bcrypt.compare(password,userData.password)
+       
+        if(checkpassword){
+            const Spassword = await passwordHash(npassword)
+            console.log("secure",Spassword)
+            const updatePassword = await User.updateOne({_id:req.session.user_id},{$set:{password:Spassword}}) 
+            console.log("updated", updatePassword);
+            res.redirect("/changepassword")
+        }else{
+            res.render("users/pwdupdate",{message:"Incorrect password"})
+        }
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const placeOrder = async(req,res)=>{
+    try{
+        console.log("hhhh");
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
 module.exports = {
-LoadHome,
-loadsignUp,
-inserUser,
-otppage,VerifyOtp,loadLogin,verifyLogin,LoadHomee,loadShop,Logout,loadprofile,editProfile,updateUser,LoadAddress,insertData,LoadAllAddress,LoadCart,AddtoCart,recentOpt,Checkout,Default
-
+LoadHome,loadsignUp,inserUser,otppage,VerifyOtp,loadLogin,verifyLogin,LoadHomee,loadShop,Logout,loadprofile,editProfile,updateUser,LoadAddress,insertData,LoadAllAddress,LoadCart,AddtoCart,recentOpt,Checkout,Default, Changepassword,addPassword,Checkoutaddress, placeOrder
 }

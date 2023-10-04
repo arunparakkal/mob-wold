@@ -134,8 +134,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    
+                                   
                                         <% categories.forEach((category, index)=>{ %>
+                                            
                                             <tr>
                                               
                                               <td>
@@ -144,13 +145,18 @@
                                               <td><%= category.categoryname %></td>
                                               <td><%= category.description %></td>
                                               <td>
-                                            
+                                           
                                                 <a href="editcategory?userId=<%= category._id ,%>" class="btn btn-info p-1">Edit</a>
                                                 <!-- <a href="delete/<%= category._id %>" class="btn btn-info p-1">Delete</a> -->
+                                                    
+                                                    <!-- <a href="list" class="btn btn-danger p-1">Unlist</a> -->
                                                 
-                                                    <a href="" class="btn btn-danger p-1">Unlist</a>
-                                                
-                                                    <a href="" class="btn btn-success p-1">List</a>
+                                                    <% if(category.active == false) {%>
+                                                    <a href="list?categoryId=<%= category._id %>" class="btn btn-success p-1">List </a>
+                                                    <%}else{%>
+                                                        <a href="unlist?categoryId=<%= category._id %>" class="btn btn-danger p-1">unlist </a>
+                                                        <%}%>
+                                                    
                                               
                                                 
                                               </td>

@@ -68,45 +68,35 @@
         <section class="content-main mt-80 mb-80">
             <div class="card mx-auto card-login">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Edit profile</h4>
-                    <form method="post" action="address"         >
+                    <h4 class="card-title mb-4">changePassword</h4>
+                    <form method="post" action="changepassword"         >
                        
                       
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">Old password</label>
                           
-                            <input class="form-control" name="name" placeholder="Your Name" type="text" >
+                            <input class="form-control" name="password" placeholder="Enter Your old password" type="password" >
                         </div>
                         <div class="mb-3">
-                          <label class="form-label">phone </label>
-                          <input class="form-control" name="mobile" placeholder="Enter Your phone" type="text" >
-                      </div>
-                        <div class="mb-3">
-                            <label class="form-label">address 1</label>
-                            <input class="form-control" name="address1" placeholder="Enter Your Address" type="text" >
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">address 2</label>
-                          <input class="form-control" name="address2" placeholder="Enter Your second Addres" type="text" >
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">State</label>
-                        <input class="form-control" name="state" placeholder="Your State" type="text" >
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">pinCode</label>
-                      <input class="form-control" name="postalCode" placeholder="Enter your pincode" type="text" >
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Contry</label>
-                    <input class="form-control" name="country" placeholder="Enter your Contry" type="text" >
-                </div>
-                  
+													<label class="form-label">new password</label>
+												
+													<input class="form-control" name="npassword" placeholder="New password" type="password" >
+											</div>
+											<div class="mb-3">
+												<label class="form-label">re-enter password</label>
+											
+												<input class="form-control" name="rpasword" placeholder="Re-enter new password" type="password" >
+										</div>
                     
                        <!-- form-group// -->
+                       <div class="align">
+                        <% if(typeof message!== "undefined"){%>
+                            <h6 style="color: red;"><%= message %></h6>
+                            <%}%>
+                       </div>
  
                         <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100"> add </button>
+                            <button type="submit" class="btn btn-primary w-100"> Edit </button>
                         </div> <!-- form-group// -->
                     </form>
                 </div>

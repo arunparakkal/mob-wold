@@ -27,15 +27,16 @@
                               <th>Quantity</th>
                               <th>Price</th>
                               <th>Total</th>
-                              <th></th>
+                              <th>ghk</th>
                           </tr>
                       </thead>
                       <tbody>
+                       
                         <% if(cart && cart.products.length > 0){ %>
 
                        <% cart.products.forEach((product)=>{ %>
 
-                       
+                        
                           <tr>
                               <td class="cart__product__item">
                                   <img src="/public/uploadProduct/<%= product.productId.image[0]%>" alt="<%= product.productname%>">
@@ -86,7 +87,7 @@
                       <li>Subtotal <span>&#8377;<%= cart.cartSubtotal %></span></li>
                       <li>Total <span>&#8377;<%= cart.cartTotal %></span></li>
                   </ul>
-                  <a href="checkout" class="primary-btn">Proceed to checkout</a>
+                  <a href="checkout?cart=<%= JSON.stringify(cart)%>" class="primary-btn">Proceed to checkout</a>
               </div>
           </div>
       </div>

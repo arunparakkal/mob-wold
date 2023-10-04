@@ -56,6 +56,11 @@ userRoute.post("/address",UserController.insertData)
 userRoute.get('/addresses',auth.isLogin,UserController.LoadAllAddress)
 userRoute.get("/cart",UserController.LoadCart)
 userRoute.post("/addtocart",UserController.AddtoCart)
+userRoute.get("/checkoutaddadress",UserController.Checkoutaddress)
 userRoute.get("/checkout",UserController.Checkout)
+userRoute.post("/order-placed",UserController.placeOrder)
 userRoute.get("/default",UserController.Default)
+userRoute.get("/changepassword",UserController.Changepassword)
+userRoute.post("/changepassword",UserController.addPassword)
+
 module.exports = userRoute

@@ -8,11 +8,12 @@ const isLogin = async(req,res,next)=>{
             
             const userData = await User.findOne({_id:req.session.user_id})
 
-           console.log(userData);
+            
             if(userData.is_block){
-                
+              
                return res.render("users/login",{message:"Your blocked by admin pleasse contact admin"})
             }
+          
             next()
         }else{
              

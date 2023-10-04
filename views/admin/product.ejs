@@ -103,8 +103,9 @@
                                     <select name="categoryname" class="form-control" id="product_name">
                                         <option value="" selected disabled>Select a category</option>
                                         <% categories.forEach(category => { %>
-                                            <option value="<%= category.categoryname %>"><%= category.categoryname %></option>
-                                            
+                                            <% if (category.active === true) { %>
+                                                <option value="<%= category.categoryname %>"><%= category.categoryname %></option>
+                                            <% } %>
                                         <% }); %>
                                     </select>
                                     
