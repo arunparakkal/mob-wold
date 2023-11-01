@@ -16,27 +16,32 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("Error password element found:", errorPassword); // Fix the typo here
   
     form.addEventListener("submit", function(event) {
-      console.log("hyyy");
+      
       var nameInput = document.getElementsByName("name")[0];
       var emailInput = document.getElementsByName("email")[0];
       var mobileInput = document.getElementsByName("mno")[0]; // Add [0] to access the first element
       var passwordInput = document.getElementsByName("password")[0];
+      var CpasswordInput = document.getElementsByName("password")[0];
+    
   
       var name = nameInput.value;
       var email = emailInput.value;
       var mno = mobileInput.value;
       var password = passwordInput.value;
+      var Cpassword = CpasswordInput.value;
   
       var nameValid = name.length >= 4;
       var emailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email);
       var mobileValid = mno.length >= 10;
       var passwordValid = password.length >= 4;
+      var CpasswordValid = Cpassword.length >= 4;
   
       // Reset error display for each validation check
       errorName.style.display = "none";
       errorMno.style.display = "none";
       errorEmail.style.display = "none"; // Add this line
       errorPassword.style.display = "none"; // Fix the typo here
+      errorCPassword.style.display = "none"; //
   
       // Validate name
       if (!nameValid) {
@@ -61,6 +66,10 @@ document.addEventListener('DOMContentLoaded', function() {
         errorPassword.style.display = "block"; // Fix the typo here
         event.preventDefault();
       }
+      // if (!CpasswordValid) {
+      //   errorCPassword.style.display = "block"; // Fix the typo here
+      //   event.preventDefault();
+      // }
     });
   });
   

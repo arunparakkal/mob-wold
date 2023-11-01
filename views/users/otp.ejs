@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-md-6 col-lg-7 d-flex align-items-center">
                                 <div class="card-body p-4 p-lg-5 text-black">
-                                    <form method="POST" action="/userRoute" id="myForm"> <!-- Specify the method (POST) and action (your server route) -->
+                                    <form method="POST" action="/verifyotp" id="myForm"> <!-- Specify the method (POST) and action (your server route) -->
                                        <input type="hidden" name="userId" value="<%= userId %>">
                                        <input type="hidden" name="i" value="hello">
                                         <div class="d-flex align-items-center mb-3 pb-1">
@@ -82,7 +82,7 @@
         }
     
         var otpGenerationTime;
-        var otpTimeoutDuration = 20000; // Timeout duration in milliseconds (e.g., 2 minutes)
+        var otpTimeoutDuration = 50000; // Timeout duration in milliseconds (e.g., 2 minutes)
         var otpExpired = false;
     
         function generateOTP() {

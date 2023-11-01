@@ -1,0 +1,103 @@
+<%- include('../layouts/adminheader.ejs') %>
+<style>
+    .btn-pagination {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #01060b;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.btn-pagination.current-page {
+  background-color: #ccc;
+  color: #333;
+}
+</style>
+<section class="content-main" style="background-color: #f8f8f8; width: 1200px;">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Order List</h2>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" style="width: 800px;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer name</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(orders.length > 0){ %>
+              <% orders.forEach(function(orderItem) { %>
+               
+                <!-- Start a new table row for each order -->
+                <tr>
+                  <!-- HTML code for each product -->
+                  <td>
+                    <%= orderItem._id %>
+                  </td>
+                  <td><b>
+                    <%= orderItem.userId?.name %>
+                  </b></td>
+                  <td>
+                    <%= orderItem.orderStatus %>
+                  </td>
+                  <td>
+                    <%= orderItem.orderDate.toLocaleDateString('en-IN', {
+                      year: 'numeric', month: 'short', day: 'numeric'
+                    }) %>
+                  </td>
+                  <td class="text-end">
+                    <a href="/admin/order/<%= orderItem._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                  </td>
+                </tr>
+                <!-- Close the table row for the current order -->
+              <% }) %>
+              
+            <%}else{ %>
+                      <h1>No data</h1>
+           <% } %>
+            </tbody>
+          </table>
+        </div> <!-- table-responsive //end -->
+        <div class="pagination">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %>" class="btn-pagination<%= i === currentPage ? ' current-page' : '' %>"><%= i %></a>
+          <% } %>
+        </div>
+      </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+  </div>
+</section> <!-- content-main end// -->
+
+
+
+    <%- include('../layouts/adminfooter.ejs') %>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+        <script>
+            $(document).ready(function () {
+                console.log("Document is ready.");
+
+                var table = $('#myTable').DataTable({
+                    "paging": true,          // Enable pagination
+                    "pageLength": 5,        // Number of rows per page
+                    "lengthMenu": [5, 10, 25, 50, 75, 100],  // Dropdown options for rows per page
+                });
+
+                table.on('draw', function () {
+                    $(".paginate_button:not(.previous):not(.next)").addClass("number_button");
+                });
+            });
+
+
+
+        </script>

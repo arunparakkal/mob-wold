@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
         require:true
     },
     mobile:{
-        type:String,
+        type:Number,
         require:true
     },
     image: {
@@ -32,6 +32,10 @@ const userSchema = mongoose.Schema({
     is_block:{
         type:Boolean,
         default:false
+    },
+    token:{
+        type:String,
+        default:''
     }
     
 })

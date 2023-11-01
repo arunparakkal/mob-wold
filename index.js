@@ -1,10 +1,13 @@
 const mongoose = require("mongoose")
 require("dotenv").config()
+
+
 mongoose.connect(process.env.MONG_DB_URL).then(()=>{
     console.log("monngodb start");
 }).catch((Error)=>{
     console.log(Error.message);
 })
+
 
 const express = require("express")
 const app = express()

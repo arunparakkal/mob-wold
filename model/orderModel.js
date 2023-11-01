@@ -1,91 +1,87 @@
-const mongoose= require('mongoose');
-
-const orderSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'users'
+const mongoose = require("mongoose")
+const orderSchema = mongoose.Schema({
+  userId:{
+    type:mongoose.Schema.ObjectId,
+    ref:"User"
+  },
+  orderDate:{
+    type:Date,
+    default:Date.now
+  },
+  totalAmout:{
+    type:Number,
+    require:true
+  },
+  products:[{
+    productId:{
+      type:mongoose.Schema.ObjectId,
+      ref:"Product",
+      required:true
     },
-    products: [
-        {
-            productId: {
-                type: mongoose.Schema.ObjectId,
-                ref: 'Product',
-                required: true,
-            },
-            quantity:{
-                type: Number,
-                required: true,
-                min: 1,
-            },
-            productprice: {
-                type:Number,
-                require: true,
-                min: 0,
-            }, 
-        },
-    ],
-    orderStatus: {
+    quantity:{
+      type:Number,
+      require:true
+    },
+   
+    price:{
+      type:Number,
+      require:true
+    }
+  },
+  ],
+  orderStatus: {
 		type: String,
-		enum: ['Pending','Cancelled','Shipped','Delivered','Returned'],
+		enum: ['Pending','Cancelled','Shipped','Delivered','Returned','placed'],
 		default: 'Pending',
 	},
-	totalprice: {
-		type: Number,
-		required: true,
-		min: 0,
-	},
-	paymentMethod: {
-		type: String,
-		required: true,
-	},
-    isPaid: {
-		type: Boolean,
-		default: false,
-	},
-    paymentData:{
-        type: Object,
+  idPaid:{
+    type:Boolean,
+    default:false
+  },
+  address:{
+    Name:{
+      type:String,
+      require:true
     },
-    orderDate: {
-        type: Date,
-        default: Date.now 
+    Number: {
+      type: Number,
+      required: true,
     },
-	address: {
-        name:{
-            type:String,
-            required:true
-        },
-         tel:{
-            type:Number,
-            required:true,
-         },
-		address: {
-			type: String,
-			required: true,
-		},
-		city: {
-			type: String,
-			required: true,
-		},
-		state: {
-			type: String,
-			required: true,
-		},
-		pincode: {
-			type: Number,
-			required: true,
-		}
-	},
-    delivered: {
-        deliveredDate: Date, 
+    addressLine1: {
+      type: String,
+      required: true,
     },
-    reasonResponse :{
-        type: String,
-        
+    addressLine2: {
+      type: String,
+      required: true,
     },
-    createdAt: {
-		type: Date,
-		default: Date.now,
-	  },
-     
-});
-module.exports = mongoose.model('Order', orderSchema)
+
+    state: {
+      type: String,
+      required: true,
+    },
+    postalCode: {
+      type: Number,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+   
+
+  },
+  paymentmethod:{
+    type:String,
+    require:true
+  },
+  totalprice:{
+    type:Number,
+    require:true
+  },
+  walletBalance:{
+    type:Number,
+    require:true
+  }
+})
+module.exports = mongoose.model("Order",orderSchema)

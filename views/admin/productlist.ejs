@@ -13,7 +13,7 @@
                     <th>Description</th>
                     <th>Color</th>
                     <th>Date</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -31,14 +31,14 @@
                     <td><%= product.description %></td>
                     <td><%= product.color %></td>
                     <td><%= product.date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
-                    <td>
+                    <!-- <td>
                         <a href="#" class="btn btn-sm font-sm rounded btn-brand">
                             <i class="material-icons md-edit"></i> Edit
                         </a>
                         <a href="#" class="btn btn-sm font-sm btn-light rounded">
                             <i class="material-icons md-delete_forever"></i> Delete
                         </a>
-                    </td>
+                    </td> -->
                 </tr>
                 <% }) %>
             </tbody>

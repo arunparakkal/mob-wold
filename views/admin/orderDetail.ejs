@@ -1,0 +1,227 @@
+<%- include('../layouts/adminheader.ejs') %>
+   
+<section class="content-main">
+  <div class="content-header">
+    <% orders.forEach(function(orderItem) { %>
+    <div>
+      <h2 class="content-title card-title">Order detail</h2>
+      <p>Details for Order ID: <%= orderItem._id %></p>
+    </div>
+  </div>
+  <div class="card">
+    <header class="card-header">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+          <span>
+            <i class="material-icons md-calendar_today"></i> <b><%= orderItem.orderDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %></b>
+          </span> <br>
+        </div>
+        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+          <form method="POST" action="/admin/status/<%= orderItem._id %>">
+            <label for="newStatus">New Status:</label>
+            <select name="newStatus" id="newStatus">
+              <option value="Pending" <% if (orderItem.ordeStatus === 'Pending') { %>selected<% } %>>Pending</option>
+              <option value="Shipped" <% if (orderItem.ordeStatus === 'Shipped') { %>selected<% } %>>Shipped</option>
+              <option value="Cancelled" <% if (orderItem.ordeStatus === 'Cancelled') { %>selected<% } %>>Cancelled</option>
+              <option value="Delivered" <% if (orderItem.ordeStatus === 'Delivered') { %>selected<% } %>>Delivered</option>
+            </select>
+            <input type="hidden" name="orderId" value="<%= orderItem._id %>">
+            <button type="submit">Update Status</button>
+          </form>
+        </div>
+      </div>
+    </header> <!-- card-header end// -->
+    <div class="card-body">
+      <div class="row mb-50 mt-20 order-info-wrap">
+        <div class="col-md-4">
+          <article class="icontext align-items-start">
+            <span class="icon icon-sm rounded-circle bg-primary-light">
+              <i class="text-primary material-icons md-person"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1">Customer</h6>
+              <p class="mb-1">
+                <%= orderItem.userId.name %><br>
+                <%= orderItem.userId.tel %>
+              </p>
+            </div>
+          </article>
+        </div> <!-- col// -->
+        <div class="col-md-4">
+          <article class="icontext align-items-start">
+            <span class="icon icon-sm rounded-circle bg-primary-light">
+              <i class="text-primary material-icons md-local_shipping"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1">Order info</h6>
+              <p class="mb-1">
+                Pay method: <%= orderItem.paymentmethod %><br>
+                Status: <%= orderItem.orderStatus %>
+              </p>
+              <% if (orderItem.orderStatus === 'Returned') { %>
+              <p>Reason for return: <%= orderItem.reasonResponse %></p>
+              <% } %>
+            </div>
+          </article>
+        </div> <!-- col// -->
+        <div class="col-md-4">
+          <article class="icontext align-items-start">
+            <span class="icon icon-sm rounded-circle bg-primary-light">
+              <i class="text-primary material_icons md-place"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1">Deliver to</h6>
+              <p class="mb-1">
+                City: <%= orderItem.address.Name %><br>
+                <%= orderItem.address.addressLine1 %><br>
+                <%= orderItem.address.state %>, <%= orderItem.address.postalCode %>
+              </p>
+            </div>
+          </article>
+        </div> <!-- col// -->
+      </div> <!-- row // -->
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th width="20%">Product</th>
+                  <th>Product Name</th>
+                  <th width="20%">Unit Price</th>
+                  <th width="20%">Quantity</th>
+                  <th width="20%" class="text-end">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orderItem.products.forEach(function(product) { %>
+                <% if (product.productId) { %>
+                <tr>
+                  <td>
+                    <a class="itemside d-flex" href="#">
+                      <div class="left">
+                        <img src="/uploadProduct/<%= product.productId.image[0] %>" width="40" height="40" class="img-xs" alt="Item">
+                      </div>
+                    </a>
+                  </td>
+                  <td>
+                    <div class="info">
+                      <%= product.productId.productname %>
+                    </div>
+                  </td>
+                  <td>
+                    <%= product.price %>
+                  </td>
+                  <td>
+                    <%= product.quantity %>
+                  </td>
+                  <td class="text-end">
+                    <%= product.price * product.quantity %>
+                  </td>
+                </tr>
+                <% } %>
+                <% }); %>
+              </tbody>
+            </table>
+          </div> <!-- table-responsive// -->
+        </div> <!-- col// -->
+        <div class="col-lg-1"></div>
+        <div class="col-lg-4">
+          <div class="h-25 pt-4">
+            <div class="mb-3">
+              <article class="float-end">
+                <% var grandTotal = 0; %>
+                <% orderItem.products.forEach(function(product) { %>
+                <dl class="dlist d-flex">
+                  <dt><%= product.productId.productname %>:</dt>
+                  <dd>₹ <%= product.price * product.quantity %></dd>
+                </dl>
+                <!-- <% grandTotal += product.price * product.quantity; %>
+                <% }) %> -->
+                <dl class="dlist">
+                  <dt>Grand total:</dt>
+                  <dd> <b class="h5"></b>₹<%= orderItem.totalprice %></dd>
+                </dl>
+                <dl class="dlist">
+                  <dt class="text-muted">Status:</dt>
+                  <dd>
+                    <% if (orderItem.orderStatus === 'Cancelled') { %>
+                    <span class="badge rounded-pill alert-danger"><%= orderItem.orderStatus %></span>
+                    <% } else { %>
+                    <span class="badge rounded-pill alert-success"><%= orderItem.orderStatus %></span>
+                    <% } %>
+                  </dd>
+                </dl>
+              </article>
+            </div>
+          </div>
+        </div> <!-- col// -->
+      </div>
+    </div>
+    <% }); %>
+  </div> <!-- card-body end// -->
+</section> <!-- content-main end// -->
+
+
+    <footer class="main-footer font-xs">
+
+    </footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+<script>
+    $(document).ready(function() {
+        $('form').each(function() {
+            $(this).submit(function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+                var orderId = formData.get('orderId');
+                var newStatus = formData.get('newStatus');
+
+                $.ajax({
+                    url: '/admin/status/' + orderId,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ newStatus }),
+                    success: function(data) {
+                        if (data.success) {
+                          
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Status updated successfully.',
+                                showConfirmButton: true,
+                                timer: 3000
+                            });
+                            window.location.href = '/admin/order/' + orderId;
+                        } else {
+                           
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while updating the status.',
+                                showConfirmButton: true,
+                                timer: 3000
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while updating the status.'
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+
+
+    <%- include('../layouts/adminfooter.ejs') %>

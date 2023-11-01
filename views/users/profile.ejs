@@ -9,7 +9,7 @@
         <nav class="nav flex-lg-column w-100 d-flex nav-pills mb-4">
           <a class="nav-link my-0 bg-light" href="/addresses"><p class="pb-0 mb-0" style="width: 100px">Addresses</p></a>
         
-          <a class="nav-link my-0 bg-light" href="#"><p class="pb-0 mb-0" style="width: 100px">Orders history</p></a>
+          <a class="nav-link my-0 bg-light" href="/orderlist"><p class="pb-0 mb-0" style="width: 100px">Orders history</p></a>
          
           <a class="nav-link my-0 bg-light" href="#"><p class="pb-0 mb-0" style="width: 100px">Transactions</p></a>
          
@@ -24,7 +24,6 @@
               <div class="me-3">
                 <% if(user&& user.image) {%>
                   <img src="/userProfile/<%= user.image%>" class="rounded-circle" style="height: 60px; width: 60px;">
-                
                 <% }else{ %>
                 <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/avatars/avatar.webp" class="rounded-circle" style="height: 60px; width: 60px;" />
                 <% } %>
@@ -42,8 +41,27 @@
                
                 <a href="/editprofile?user=<%= user._id %>" class="btn-icon"> Edit</a>
               </div>
+              <div class="ms-auto" style=" text-align: right;  page-break-inside: auto;" id="walletElement" >
+                <a href="YOUR_ACTION_URL_HERE">
+                
+                  <img src="https://static.vecteezy.com/system/resources/thumbnails/004/983/677/small/e-wallet-logo-design-design-template-free-vector.jpg" style="height: 100px; width: 100px; margin-top: 17px  ;
+                  margin-right: -21px;"     />
+                    <button  class="btn btn-success" >Recharge</button>
+                </a>
+              </div>
+              <div class="" >
+             
+   
+                <input type="text" name="" id="" value="<%=walletData.balance %>" readonly style="border-color: red; border-radius: 3px;  border-color: red;
+                border-radius: 3px;
+                width: 168px;
+                height: 36px;
+                margin-right: 100px;
+                margin-left: 6px;
+                padding-left: 65px;">
+              </div>
             </div>
-
+            
             <hr />
 
             
@@ -64,6 +82,5 @@
   </div>
 </section>
 <!-- content -->
-
 
 <%- include("../layouts/footer")%>

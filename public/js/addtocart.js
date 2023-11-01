@@ -1,5 +1,7 @@
+
+
 const addtocartBottons = document.querySelectorAll(".addtocartbtn")
-console.log(addtocartBottons); 
+
 addtocartBottons.forEach((button) =>{
 
 button.addEventListener('click',(e)=>{
@@ -13,7 +15,22 @@ button.addEventListener('click',(e)=>{
       productId,
       quantity:1
     })
+  }).then(response => response.json()).then(data =>{
+   console.log(data);
+    if(data.noStock){
+      return  Swal.fire({
+        icon: 'Failed',
+        title: 'Out of Stock',
+        text: 'Stock Coming Soon!..Thanks For ',
+    });
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Item added',
+      text: 'The item has been successfully added to your cart!',
+  });
   })
+  
 })
  
 })

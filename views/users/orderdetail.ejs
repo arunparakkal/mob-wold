@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="screen-overlay"></div>
+
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="logout">logout</a>
+                    </li>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/admin-assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/admin-assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/admin-assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/admin-assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="admin-assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+
+
+
+
+
+<section class="content-main">
+  <div class="content-header">
+      <div>
+          <h2 class="content-title card-title">Order Detail</h2>
+          <p>Details for Order ID: <%= order._id %></p>
+      </div>
+  </div>
+  <div class="card">
+      <header class="card-header">
+          <div class="row align-items-center">
+              <div class="col-lg-6 col-md-6 mb-lg-0 mb-3">
+                  <span>
+                      <i class="material-icons md-calendar_today"></i>
+                  </span>
+                  <br>
+                  <small class="text-muted">Order Date: <%= order.orderDate.toLocaleDateString('en-IN', {
+                      year: 'numeric', month: 'short', day: 'numeric' }) %></small>
+              </div>
+              <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                  <!-- Add any action buttons or icons here -->
+              </div>
+          </header> <!-- card-header end// -->
+          <div class="card-body">
+              <div class="row mb-5 mt-3 order-info-wrap">
+                  <div class="col-md-4">
+                      <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                              <i class="text-primary material-icons md-person"></i>
+                          </span>
+                          <div class="text">
+                              <h6 class="mb-1">
+                                  <%= order.userId.name %>
+                              </h6>
+                              <p class="mb-1">
+                                  <%= order.userId.tel %>
+                              </p>
+                          </div>
+                      </article>
+                  </div> <!-- col// -->
+                  <div class="col-md-4">
+                      <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                              <i class="text-primary material-icons md-local_shipping"></i>
+                          </span>
+                          <div class="text">
+                              <h6 class="mb-1">Order Info</h6>
+                              <p class="mb-1">Shipping: Fargo Express <br> Payment Method: <%= order.paymentmethod %>
+                              <br>
+                              <p >Status:
+                                  <%= order.orderStatus %>
+                              </p>
+                              </p>
+                          </div>
+                      </article>
+                  </div> <!-- col// -->
+                  <div class="col-md-4">
+                      <article class="icontext align-items-start">
+                          <span class="icon icon-sm rounded-circle bg-primary-light">
+                              <i class="text-primary material-icons md-place"></i>
+                          </span>
+                          <div class="text">
+                              <h6 class="mb-1">Deliver To</h6>
+                              <p class="mb-1">City: <%= order.address.Name %> <br>
+                              <%= order.address.addressLine1 %> <br>
+                              <%= order.address.state %>, <%= order.address.postalCode %>
+                              </p>
+                          </div>
+                      </article>
+                     
+                  </div> <!-- col// -->
+              </div> <!-- row // -->
+              <div class="row">
+                  <div class="col-lg-7">
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th width="20%">Product</th>
+                                      <th width="20%">Product Name</th>
+                                      <th width="20%">Product Price</th>
+                                      <th width="20%">Quantity</th>
+                                      <th width="20%">Status</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <% order.products.forEach(function(item) { %>
+                                      <tr>
+                                          <td>
+                                              <a class="itemside d-flex" href="#">
+                                                  <div class="left">
+                                                      <img src="/uploadProduct/<%= item.productId.image[0] %>"
+                                                          width="40" height="40" class="img-xs" alt="Item">
+                                                  </div>
+                                              </a>
+                                          </td>
+                                          <td>
+                                              <%= item.productId.productname %>
+                                          </td>
+                                          <td>
+                                              <%= item.price %>
+                                          </td>
+                                          <td>
+                                              <%= item.quantity %>
+                                          </td>
+                                          <td>
+                                              <%= order.orderStatus %>
+                                          </td>
+                                      </tr>
+                                  <% }) %>
+                              </tbody>
+                          </table>
+                      </div> <!-- table-responsive// -->
+                  </div> <!-- col-lg-7 // -->
+                  <div class="col-lg-1"></div>
+                  <div class="col-lg-4">
+                      <div class="box shadow-sm bg-light">
+                          <h6 class="mb-3">Order Summary</h6>
+                      </div>
+                      <table class="table">
+                          <tr>
+                              <td colspan="4">
+                                  <article>
+                                      <% order.products.forEach(function(item) { %>
+                                          <dl class="dlist d-flex">
+                                              <dt>
+                                                  <%= item.productId.productname %> :
+                                              </dt>
+                                              <dd>₹ <%= item.price %>
+                                              </dd>
+                                          </dl>
+                                      <% }) %>
+                                      <dl class="dlist d-flex">
+                                          <!-- <dt>Discount:</dt>
+                                          <dd>₹0.0</dd> -->
+                                      </dl>
+                                      <dl class="dlist d-flex">
+                                          <dt>Grand Total:</dt>
+                                          <dd><b class="h5">₹<%= order.totalprice %></b></dd>
+                                      </dl>
+                                  </article>
+                                  <div class="text-center mt-4">
+                                      <% if (order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Delivered' &&
+                                          order.orderStatus !== 'Returned') { %>
+                                          <button class="btn btn-success"
+                                              onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                                      <% } %>
+                                  </div>
+                                  
+                              </td>
+                          </tr>
+                      </table>
+                  </div> <!-- col-lg-4 // -->
+              </div> <!-- row // -->
+          </div> <!-- card-body end// -->
+      </div> <!-- card end// -->
+  </section> <!-- content-main end// -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  
+  <script>
+    function cancelOrder(orderId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Cancel Order',
+            text: 'Are you sure you want to cancel this order?',
+            showCancelButton: true,
+            cancelButtonText: "No, keep the order",
+            confirmButtonText: 'Yes, cancel it',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#6fd542',
+            heightAuto: false,
+        }).then((result) => {
+            console.log("bla bla bla",result.isConfirmed);
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: '/ordercancel',
+                    method: 'POST',
+                    data: JSON.stringify({ orderId: orderId }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                            console.log(response)
+                            window.location.href = '/orderdetail/' + orderId;
+                        } else {
+                            // Handle the error case here if needed.
+                            console.log('Error: An error occurred while cancelling the order.');
+
+                        }
+                    },
+                    error: function () {
+                        // Handle the AJAX error here if needed.
+                        console.log('Error: An error occurred while making the AJAX request.');
+
+                    }
+
+
+
+                });
+            }
+        });
+    }
+</script>
+<%- include("../layouts/adminfooter")%>

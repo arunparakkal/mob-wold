@@ -6,6 +6,7 @@ const Category = require("../model/categoryModel")
 module.exports = {
     verifyloagin: async(req,res)=>{
         try{
+            
             const email = req.body.email
             const password = req.body.password
             const userData =  await User.findOne({email:email})

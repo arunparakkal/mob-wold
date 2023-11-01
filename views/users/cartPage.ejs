@@ -1,0 +1,148 @@
+<%- include("../layouts/header")%>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Shop Cart Section Begin -->
+    <section class="shop-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shop__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (cart && cart.products.length > 0) { %>
+                                    <% cart.products.forEach((product) => { %>
+                                        <tr class="tableContainer" data-id="<%= product._id %>">
+                                            <td class="cart__product__item">
+                                                <img src="/uploadProduct/<%= product.productId.image[0] %>"
+                                                    alt="<%= product.productId.productname %>">
+                                                <div class="cart__product__item__title">
+                                                    <h6><%= product.productId.productname %></h6>
+                                                </div>
+                                            </td>
+                                            <td class="cart__quantity">
+                                                <div class="pro-qty">
+                                                    <span class="dec qtybtn decreaseBtn"
+                                                        data-productId="<%= product.productId._id %>">-</span>
+                                                    <input type="text" value="<%= product.quantity %>" class="qtyInput">
+                                                    <input type="hidden" class="productId" value="<%= product.productId._id %>">
+                                                    <span class="inc qtybtn increaseBtn">+</span>
+                                                </div>
+                                            </td>
+                                            <td class="cart__total">&#8377;<%= product.price %></td>
+                                            <td class="cart__total productSubtotal">&#8377;<%= product.subTotal %></td>
+                                            <td class="cart__close"><span class="icon_close"></span></td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5"><h3>Cart is empty</h3></td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+    
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="cart__btn">
+                  <a href="#">Continue Shopping</a>
+              </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="cart__btn update__btn">
+                  <a href="#"><span class="icon_loading"></span> Update cart</a>
+              </div>
+          </div> -->
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <!-- <div class="discount__content">
+                  <h6>Discount codes</h6>
+                  <form action="#">
+                      <input type="text" placeholder="Enter your coupon code">
+                      <button type="submit" class="site-btn">Apply</button>
+                  </form>
+              </div> -->
+                </div>
+                <div class="col-lg-4 offset-lg-2">
+                    <% if (cart && cart.products.length > 0) { %>
+                        <% cart.products.forEach((product) => { %>
+                    <div class="cart__total__procced">
+                        <h6>Cart total</h6>
+                        <ul>
+                            <li>Subtotal <span class="cartSubtotal">&#8377;<%= cart.cartSubtotal %></span></li>
+                            <li>Total <span class="cartTotal">&#8377;<%= cart.cartTotal %></span></li>
+                        </ul>
+                        <a href="checkout" class="primary-btn">Proceed to checkout</a>
+                    </div>
+                </div>
+               <% }) %>
+               <% } %>
+            </div>
+        </div>
+    </section>
+    <!-- Shop Cart Section End -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const cartCloseIcon = document.querySelectorAll(".cart__close")
+            cartCloseIcon.forEach((icon) => {
+
+                icon.addEventListener("click", function (event) {
+
+                    const cartItem = event.target.closest(".tableContainer")
+
+                    if (cartItem) {
+                        const itemId = cartItem.getAttribute("data-id")
+                        cartItem.remove();
+                        fetch(`/category_remove/${itemId}`, {
+                            method: "delete"
+                        })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                console.log(data)
+                                if (data.success) {
+                                    cartItem.remove()
+                                }
+                                else {
+                                    console.error("Failed to remove item from the cart")
+                                }
+                            })
+                            .catch((error) => {
+                                console.log("erropage");
+                                console.log("Errorr", error)
+                            })
+
+                    }
+                })
+            })
+        })
+    </script>
+    <%- include("../layouts/footer")%>

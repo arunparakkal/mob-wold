@@ -68,7 +68,7 @@
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Sign in</h4>
-                    <form method="post" >
+                    <form method="post" action="home" >
                         <div class="mb-3">
                             <input class="form-control" name="email" placeholder="Username or email" type="text">
                         </div> <!-- form-group// -->
@@ -77,8 +77,9 @@
                         </div> <!-- form-group// -->
                         <div class="align">
                           <div class="align">
+
                             
-                            <% if (typeof message !== "undefined") { %>
+                           <% if (typeof message !== "undefined") { %>
                                 <h6 style="color: red;"><%= message %></h6>
                             <% } %>
                         </div>

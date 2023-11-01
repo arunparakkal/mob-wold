@@ -15,9 +15,13 @@ const CategorySchema = mongoose.Schema({
     active:{
         type:Boolean,
         default:false
+    },
+    offer:{
+        type:Number,
+        require:true
     }
+  
  
-
 })
 
 module.exports = mongoose.model("category",CategorySchema)

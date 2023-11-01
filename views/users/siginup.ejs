@@ -69,7 +69,7 @@
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Create an Account</h4>
-                    <form method="post"  id="myForm">
+                    <form method="post" action="/register"  id="myForm">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
                             <input class="form-control" name="name" placeholder="Your Name" type="text" required >
@@ -94,10 +94,15 @@
                             <label style="display: none;" id="errorPassword"> <u style="color: red;"><p>password must be atleast 4 charactres</p></u></label>
                         </div> <!-- form-group// -->
                         <div class="mb-3">
+                            <label class="form-label">Comfirm password</label>
+                            <input class="form-control" name="Cpassword" placeholder="Comfirm Password" type="password">
+                            <!-- <label style="display: none;" id="errorCPassword"> <u style="color: red;"><p>password must be atleast 4 charactres</p></u></label> -->
+                        </div>
+                        <div class="mb-3">
                             <p class="small text-center text-muted">By signing up, you confirm that you’ve read and accepted our User Notice and Privacy Policy.</p>
                         </div> <!-- form-group  .// -->
                         <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100"> Login </button>
+                            <button type="submit" class="btn btn-primary w-100"> Register </button>
                         </div> <!-- form-group// -->
                     </form>
                     <% if (typeof message !== 'undefined') { %>

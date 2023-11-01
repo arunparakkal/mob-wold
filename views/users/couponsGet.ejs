@@ -1,0 +1,178 @@
+<%- include("../layouts/header")%>
+   
+    <style>
+      .coupon-card {
+        background: linear-gradient(135deg, #7158fe, #9d4de6);
+        color: #fff;
+        text-align: center;
+        padding: 10px 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.15);
+        margin: 10px;
+        width: 300px;
+        display: inline-block;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+      }
+    
+      .coupon-card h3 {
+        font-size: 18px;
+    
+        font-weight: 400;
+        line-height: 24px;
+        margin-bottom: 10px;
+    
+      }
+    
+      .coupon-card p {
+        font-size: 12px;
+    
+      }
+    
+      .coupon-row {
+        display: flex;
+        align-items: center;
+        margin: 10px auto;
+        width: fit-content;
+      }
+    
+      #cpnCode {
+        border: 1px dashed #fff;
+        padding: 5px 10px;
+        border-right: 0;
+        border-radius: 8px 0 0 8px;
+      }
+    
+      #cpnBtn {
+        border: 1px solid #fff;
+        background: #fff;
+        padding: 5px 10px;
+        color: #7158fe;
+        cursor: pointer;
+        border-radius: 0 8px 8px 0;
+      }
+    
+      .circle1,
+      .circle2 {
+        background: #f0fff3;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    
+      .circle1 {
+        left: -12.5px;
+    
+      }
+    
+      .circle2 {
+        right: -12.5px;
+    
+      }
+    </style>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+<!-- Coupons -->
+<% coupons.forEach(function(coupon) { %>
+  <div class="coupon-card">
+    <h3>
+      <%= coupon.description %>
+    </h3>
+    <div class="coupon-row">
+      <span id="cpnCode">
+        <%= coupon.couponCode %>
+      </span>
+      <span class="cpnBtn" data-coupon-code="<%= coupon.couponCode %>"
+        data-min-amount="<%= coupon.minAmount %>">Apply</span>
+    </div>
+    <p>Valid until: <%= coupon.expirationDate.toDateString() %>
+    </p>
+  </div>
+  <% }); %>
+    <input type="hidden" id="currentPurchaseAmount" value="<%= calculateTotalPrice %>">
+
+     
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      $(document).ready(function () {
+
+        $(".cpnBtn").on("click", function () {
+          var couponCode = $(this).data("coupon-code");
+          var minAmount = parseFloat($(this).data("min-amount"));
+          var currentPurchaseAmount = parseFloat($("#currentPurchaseAmount").val());
+
+          if (!isNaN(minAmount) && !isNaN(currentPurchaseAmount)) {
+            if (currentPurchaseAmount >= minAmount) {
+
+              $.ajax({
+                url: "/couponget",
+                method: "post",
+                data: { couponCode: couponCode },
+                success: function (response) {
+
+                  if (response.success) {
+                    Swal.fire(
+                      'Success',
+                      'Coupon applied successfully.',
+                      'success'
+                    ).then(function () {
+                      window.location.href = '/checkout?couponCode=' + encodeURIComponent(response.couponCode);
+
+                    });
+                  } else {
+                    Swal.fire(
+                      'Error',
+                      'Coupon is not applicable. Error: ' + response.error,
+                      'error'
+                    );
+                  }
+                },
+                error: function () {
+                  Swal.fire(
+                    'Error',
+                    'Error occurred while checking the coupon.',
+                    'error'
+                  );
+                }
+              });
+            } else {
+              Swal.fire(
+                'Error',
+                'Purchase amount is less than the minimum required.',
+                'error'
+              );
+            }
+          } else {
+            Swal.fire(
+              'Error',
+              'Invalid purchase amount or minimum amount.',
+              'error'
+            );
+          }
+        });
+      })
+    </script>
+
+
+    
+<%- include("../layouts/footer")%>

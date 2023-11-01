@@ -3,7 +3,7 @@ const userRoute = express()
 
 const multer = require('multer');
 const path = require('path');
-
+const nocache = require('nocache')
 const storage = multer.diskStorage({
     destination: (req, file, cb) =>{
         cb(null, 'public/userProfile');
@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({storage})
+userRoute.use(nocache())
 
 userRoute.use(express.json())
 userRoute.use(express.urlencoded({extended:true}))
@@ -32,35 +33,60 @@ userRoute.use(session({
 
 
 
-const UserController = require("../controller/userController")
-const ProductController = require('../controller/productController')
+const UserController = require("../controller/userControllerr")
+const ProductController = require('../controller/productControllerr')
+const couponController = require('../controller/couponController')
 const auth = require("../middleWare/auth")
 
 userRoute.get("/",auth.isLogout,UserController.LoadHome)
 userRoute.get("/home",auth.isLogin,UserController.LoadHomee)
-userRoute.post("/home",UserController.verifyLogin)
+userRoute.post("/home",auth.isLogout,UserController.verifyLogin)
+
+userRoute.get("/login",auth.isLogout,UserController.loadLogin)
+userRoute.post("/verifyotp",auth.isLogin,UserController.VerifyOtp)
+userRoute.get('/otp',auth.isLogout,UserController.otppage)
 userRoute.get("/logout",auth.isLogin,UserController.Logout)
-userRoute.get("/register",UserController.loadsignUp)
+
+userRoute.get("/register",auth.isLogout,UserController.loadsignUp)
 userRoute.post("/register",UserController.inserUser)
-userRoute.get("/recentopt",UserController.recentOpt)
-userRoute.get('/otp',UserController.otppage)
-userRoute.post("/userRoute",UserController.VerifyOtp)
-userRoute.get("/login",UserController.loadLogin)
-userRoute.get("/shop",UserController.loadShop)
-userRoute.get('/productdetail',ProductController.productDetail)
-userRoute.get("/profile",UserController.loadprofile)
-userRoute.get("/editprofile",UserController.editProfile)
+userRoute.get("/recentopt",auth.isLogout,UserController.recentOpt)
+
+userRoute.get("/shop",auth.isLogin,UserController.loadShop)
+userRoute.get('/productdetail',auth.isLogin,ProductController.productDetail)
+userRoute.get("/profile",auth.isLogin,UserController.loadprofile)
+userRoute.get("/editprofile",auth.isLogin,UserController.editProfile)
 userRoute.post("/update",upload.single("image"),UserController.updateUser)
-userRoute.get("/address",UserController.LoadAddress)
-userRoute.post("/address",UserController.insertData)
+userRoute.get("/address",auth.isLogin,UserController.LoadAddress)
+userRoute.post("/address",auth.isLogin,UserController.insertData)
 userRoute.get('/addresses',auth.isLogin,UserController.LoadAllAddress)
-userRoute.get("/cart",UserController.LoadCart)
-userRoute.post("/addtocart",UserController.AddtoCart)
-userRoute.get("/checkoutaddadress",UserController.Checkoutaddress)
+
+userRoute.get("/cart",auth.isLogin,UserController.LoadCart)
+userRoute.post("/addtocart",auth.isLogin,UserController.AddtoCart)
+userRoute.post('/cart-quantity',auth.isLogin,UserController.cartQuantity)
+userRoute.delete("/category_remove/:itemId",auth.isLogin,UserController.RemoveCart)
+
+userRoute.get("/checkoutaddadress",auth.isLogin,UserController.Checkoutaddress)
 userRoute.get("/checkout",UserController.Checkout)
-userRoute.post("/order-placed",UserController.placeOrder)
-userRoute.get("/default",UserController.Default)
-userRoute.get("/changepassword",UserController.Changepassword)
-userRoute.post("/changepassword",UserController.addPassword)
+userRoute.get("/default",auth.isLogin,UserController.Default)
+userRoute.get("/changepassword",auth.isLogin,UserController.Changepassword)
+userRoute.post("/changepassword",auth.isLogin,UserController.addPassword)
+userRoute.post("/placeorder",auth.isLogin,UserController.placeOrder)
+userRoute.get("/orderlist",auth.isLogin,UserController.listOrder)
+userRoute.get("/orderdetail/:orderId",auth.isLogin,UserController.orderdetail)
+userRoute.post('/verifyPayment',auth.isLogin,UserController.verifyRazorpayPayment)
+
+userRoute.get('/coupons',auth.isLogin,couponController.couponGet)
+userRoute.post('/couponget',auth.isLogin,couponController.applyCoupon)
+userRoute.post('/ordercancel',auth.isLogin,UserController.cancelOrder)
+
+userRoute.get('/forgotpassword',auth.isLogout,UserController.Foregetpassword)
+userRoute.post('/forgotverify',auth.isLogout,UserController.Foregotverify)
+userRoute.get('/forgot-password',auth.isLogout,UserController.ForegotpasswordLoad)
+userRoute.post('/forgot-password',UserController.resetpassword)
+
+userRoute.post("/walletrecharge",auth.isLogin,UserController.Walletrecharge)
+
+
+
 
 module.exports = userRoute

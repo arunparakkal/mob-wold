@@ -17,11 +17,12 @@ addcategory: async(req,res)=>{
         await cropImage.crop(req)
         console.log("croped sucss");
        const image = req.file.filename
-       
+      
        const newCategory = new Category({
         categoryname:req.body.categoryname,
         description:req.body.description,
-        image:image
+        image:image,
+        offer:req.body.offer
        })
        
        const saveCategory = await newCategory.save()

@@ -10,8 +10,9 @@ const isLogin = async(req,res,next)=>{
 
             
             if(userData.is_block){
-              
+             
                return res.render("users/login",{message:"Your blocked by admin pleasse contact admin"})
+               
             }
           
             next()
@@ -32,10 +33,11 @@ const isLogout = async(req,res,next)=>{
         if(req.session.user_id){
 
             res.redirect("/home")  
+          
             
         }else{
         next()
-       
+     
 
         }
     }
