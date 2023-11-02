@@ -72,4 +72,6 @@ admin_route.post('/listCoupon', auth.isLogin,couponController.listCoupon);
 admin_route.get('/orders',auth.isLogin,adminController.orderListing)
 admin_route.get('/order/:orderId',auth.isLogin,adminController.orderDetailView)
 admin_route.post('/status/:orderId/',auth.isLogin,adminController.updateStatus)
+
+admin_route.get('/dashboard', auth.isLogin,adminController.getDashboard)
 module.exports = admin_route

@@ -145,6 +145,326 @@ const orderListing = async (req, res) => {
         res.render('/error')
     }
 }
+
+async function calculateDeliveredOrderTotal() {
+    try {
+      const totalData = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalPriceSum: { $sum: '$totalprice' },
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+  
+      if (totalData.length === 0) {
+        return {
+          _id: null,
+          totalPriceSum: 0,
+          count: 0,
+        };
+      }
+  
+      return totalData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  async function calculateCategorySales() {
+    try {
+      const categorySalesData = await Order.aggregate([
+        {
+          $unwind: '$products',
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'products.productId',
+            foreignField: '_id',
+            as: 'productDetails',
+          },
+        },
+        {
+          $unwind: '$productDetails',
+        },
+        {
+          $match: {
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'productDetails.categoryname',
+            foreignField: 'categoryname',
+            as: 'categoryDetails',
+          },
+        },
+        {
+          $unwind: '$categoryDetails',
+        },
+        {
+          $group: {
+            _id: '$productDetails.categoryname',
+            categoryName: { $first: '$categoryDetails.categoryname' },
+            totalSales: {
+              $sum: { $multiply: ['$productDetails.productprice', '$products.quantity'] },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            categoryName: 1,
+            totalSales: 1,
+          },
+        },
+      ]);
+  
+      return categorySalesData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  async function calculateDailySales() {
+    try {
+      const dailySalesData = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$orderDate',
+              },
+            },
+            dailySales: {
+              $sum: '$totalprice',
+            },
+          },
+        },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
+      ]);
+  
+      return dailySalesData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  async function calculateOrderCountByDate() {
+    try {
+      const orderCountData = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$orderDate',
+              },
+            },
+            orderCount: { $sum: 1 },
+          },
+        },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
+      ]);
+  
+      return orderCountData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  async function calculateProductsCount() {
+    try {
+      const productCount = await Product.countDocuments();
+  
+      return productCount;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  async function calculateOnlineOrderCountAndTotal() {
+    try {
+      const onlineOrderData = await Order.aggregate([
+        {
+          $match: {
+            paymentMethod: 'online',
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalPriceSum: { $sum: '$totalprice' },
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+  
+      return onlineOrderData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  async function calculateCodOrderCountAndTotal() {
+    try {
+      const codOrderData = await Order.aggregate([
+        {
+          $match: {
+            paymentMethod: 'cod',
+            orderStatus: 'Delivered',
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalPriceSum: { $sum: '$totalprice' },
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+  
+      return codOrderData;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  
+  async function getLatestOrders() {
+    try {
+      const latestOrders = await Order.aggregate([
+        {
+          $unwind: '$products',
+        },
+        {
+          $sort: {
+            date: -1,
+          },
+        },
+        {
+          $limit: 10,
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user',
+            foreignField: '_id',
+            as: 'userDetails',
+          },
+        },
+        {
+          $addFields: {
+            username: {
+              $arrayElemAt: ['$userDetails.name', 0],
+            },
+            address: {
+              $arrayElemAt: ['$userDetails.address.name', 0],
+            },
+          },
+        },
+        {
+          $project: {
+            userDetails: 0,
+          },
+        },
+      ]);
+  
+      return latestOrders;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  
+  
+  async function calculateListedCategoryCount() {
+    try {
+      const listedCategoryCount = await Category.countDocuments({ isListed: true });
+  
+      return listedCategoryCount;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+  
+  const getDashboard = async (req, res) => {
+    try {
+  
+      const ordersData = await calculateDeliveredOrderTotal()
+      const orders = ordersData[0]
+      const categorySales = await calculateCategorySales()
+      const salesData = await calculateDailySales()
+      const salesCount = await calculateOrderCountByDate()
+      const categoryCount = await calculateListedCategoryCount()
+      const productsCount = await calculateProductsCount()
+      const onlinePay = await calculateOnlineOrderCountAndTotal()
+      const codPay = await calculateCodOrderCountAndTotal()
+      const latestorders = await getLatestOrders()
+  
+         console.log(ordersData,"get dashBorde rsData")
+       console.log(orders,"get dashBordorders")
+         console.log(categorySales,"get dashBorders categorySales")
+         console.log(salesData,"get dashBorders  salesData")
+         console.log(salesCount,"get dashBordersData salesCount")
+         console.log(categoryCount ,"get dashBorders categoryCount ")
+         console.log(productsCount,"get dashBorders productsCount")
+         console.log(onlinePay,"get dashBord onlinePay")
+         console.log(codPay,"get dashBord codPay")
+         console.log(latestorders,"get dashBord latestorders")
+         console.log("productsCount:", productsCount);
+         console.log("categoryCount:", categoryCount);
+        console.log("onlinePay.totalPriceSum:", onlinePay[0].totalPriceSum);
+        console.log("onlinePay.count:", onlinePay[0].count);
+      console.log('uasername', latestorders)
+  
+      res.render('dashboard', {
+        orders, productsCount, categoryCount,
+        onlinePay: onlinePay[0], salesData, order: latestorders, salesCount,
+        codPay: codPay[0], categorySales
+      })
+  
+    }
+    catch (error) {
+      res.render('/error')
+    }
+  
+  }
 module.exports = {
     loadLogin,
     verifyLogin ,
@@ -154,5 +474,6 @@ module.exports = {
     orderDetailView,
     orderListing,
     updateStatus,
-    Logout
+    Logout,
+    getDashboard
 }
