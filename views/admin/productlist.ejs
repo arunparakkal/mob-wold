@@ -13,6 +13,7 @@
                     <th>Description</th>
                     <th>Color</th>
                     <th>Date</th>
+                    <th>Actions</th>
                     <!-- <th>Action</th> -->
                 </tr>
             </thead>
@@ -31,6 +32,16 @@
                     <td><%= product.description %></td>
                     <td><%= product.color %></td>
                     <td><%= product.date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+                   
+                    <td><a href="product-edit?productId=<%=product._id%>" class="btn btn-outline-success">Edit</a>
+                        <% if(product.isListed == false) {%>
+                            <a href="listproduct?productId=<%=product._id%>" class="btn btn-success p-1">List </a>
+                            <%}else{%>
+                                <a href="unlistproduct?productId=<%=product._id%>" class="btn btn-danger p-1">unlist </a>
+                                <%}%>   
+                       
+                        
+                    </td>
                     <!-- <td>
                         <a href="#" class="btn btn-sm font-sm rounded btn-brand">
                             <i class="material-icons md-edit"></i> Edit

@@ -43,6 +43,7 @@ const couponController = require('../controller/couponController')
 const uploadProduct = require("../multer/product")
 
 admin_route.get("/login",auth.isLogout,adminController.loadLogin)
+admin_route.get("/home" ,auth.isLogout, adminController.loaddashboard)
 admin_route.post("/home" ,auth.isLogout, adminController.verifyLogin)
 admin_route.get("/userlist",auth.isLogin,adminController.loadUser)
 admin_route.get("/logout",auth.isLogin,adminController.Logout)
@@ -69,9 +70,19 @@ admin_route.post('/unListCoupon', auth.isLogin,couponController.unListCoupon);
 admin_route.post('/listCoupon', auth.isLogin,couponController.listCoupon);
 
 
+
 admin_route.get('/orders',auth.isLogin,adminController.orderListing)
 admin_route.get('/order/:orderId',auth.isLogin,adminController.orderDetailView)
 admin_route.post('/status/:orderId/',auth.isLogin,adminController.updateStatus)
 
-admin_route.get('/dashboard', auth.isLogin,adminController.getDashboard)
+admin_route.get('/addreferral_money',auth.isLogin,adminController.addrefferalmoneypag)
+admin_route.post('/add_refferamout',auth.isLogin,adminController.addrefferalmoney)
+admin_route.get("/product-edit",auth.isLogin,productController.getEditproductPage)
+admin_route.post("/product-edit",uploadProduct.array("file"),productController.editUpdateProduct)
+
+admin_route.post('/listCoupon', auth.isLogin,couponController.listCoupon);
+admin_route.get('/unlistproduct', auth.isLogin,productController.unlistproduct);
+admin_route.get('/listproduct', auth.isLogin,productController.listproduct);
+
+admin_route.post('/deleteeditproduct', auth.isLogin,productController.deteEditeproduct)
 module.exports = admin_route

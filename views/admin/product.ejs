@@ -214,6 +214,10 @@ function validateProductPrice() {
         document.getElementById('promotionalPriceError').textContent = 'Promotional price must be a non-negative number.';
         return false;
     }
+    if (salesPrice < 100) {
+        document.getElementById('promotionalPriceError').textContent = 'plaease enter offer around 100%';
+        return false;
+    }
     return true;
 }
 

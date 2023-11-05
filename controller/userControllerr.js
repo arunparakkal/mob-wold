@@ -95,7 +95,7 @@ const LoadHomee = async (req, res) => {
         const Id = req.session.user_id
 
         const userData = await User.findOne({ _id: Id });
-        res.render("users/home", { user: req.session.user_id });
+       return res.render("users/home", { user: req.session.user_id });
 
     }
     catch (Error) {
@@ -106,7 +106,7 @@ const LoadHomee = async (req, res) => {
 // signup page
 const loadsignUp = async (req, res) => {
     try {
-        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private')
         res.render("users/siginup")
     }
     catch (error) {
@@ -161,6 +161,7 @@ const inserUser = async (req, res) => {
 const recentOpt = async (req, res) => {
     try {
         const userId = req.query.userId.trim();
+        console.log(userId,req.query.userId);
         const otp = randomString.generate({ length: 4, charset: "numeric" })
         objj.OTP = otp
         console.log("recent", objj.OTP);
@@ -676,7 +677,13 @@ const Default = async (req, res) => {
 const Changepassword = async (req, res) => {
     try {
 
-        res.render("users/pwdupdate")
+        let message;
+
+        if(req?.query?.message){
+          message=req?.query?.message
+        }
+
+        res.render("users/pwdupdate",{message})
     }
     catch (error) {
         console.log(error.message);
@@ -695,7 +702,8 @@ const addPassword = async (req, res) => {
             console.log("updated", updatePassword);
             res.redirect("/changepassword")
         } else {
-            res.render("users/pwdupdate", { message: "Incorrect password" })
+            // res.render("users/pwdupdate", { message: "Incorrect password" })
+            res.redirect("/changepassword?message=Incorrect password")
         }
     }
     catch (error) {
@@ -1174,9 +1182,9 @@ const cancelOrder = async (req, res) => {
         const orderData = await Order.findById({ _id: orderId });
         const wltData = await Wallet.findOne({ user: req.session.user_id })
         console.log("totall price iwant chge", orderData.totalprice);
-        console.log("wallet amt", wltData.balance);
+      
         const tottaolBalance = wltData.balance + orderData.totalprice
-        console.log("rakkamma", tottaolBalance);
+      
         const WalletUpdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance: tottaolBalance } })
         const order = await Order.findById(orderId);
         if (!order) {
@@ -1301,8 +1309,12 @@ const ForegotpasswordLoad = async (req, res) => {
 const resetpassword = async (req, res) => {
     try {
         const password = req.body.password
+      
         const secure_password = await passwordHash(password)
-        const updateData = User.findByIdAndUpdate({ _id: req.body.user_id }, { $set: { password: secure_password, token: '' } })
+        console.log(secure_password);
+       
+        const updateData =await User.findOneAndUpdate({ _id: req.body.user_id }, { $set: { password: secure_password, token: '' } })
+       
         res.redirect("/")
 
     }

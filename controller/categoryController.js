@@ -34,6 +34,7 @@ const updateCategory = async (req, res) => {
         const { categoryname, description } = req.body
 
         const userId = req.body.userId;
+      
         if (req.file) {
             const image = req.file.filename
             const updateCategory = await Category.findOneAndUpdate({ _id: userId }, { $set: { categoryname: categoryname, description: description, image: image } })

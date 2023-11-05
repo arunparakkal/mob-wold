@@ -1,6 +1,9 @@
  const User = require("../model/userModel")
  const adminHelper = require("../helper/adminHelper")
  const Order = require('../model/orderModel')
+ const Referraloffer = require("../model/refferalmoney")
+ const Category = require("../model/categoryModel")
+ 
 const loadLogin = async(req,res)=>{
     try{
         res.render("login")
@@ -28,6 +31,15 @@ const verifyLogin = async(req,res)=>{
     catch(error){
         console.log(error.message);
     }
+}
+const loaddashboard = async(req,res)=>{
+
+  try{
+    res.render("dashboard")
+  }
+  catch(error){
+      console.log(error.message);
+  }
 }
 
 const loadUser = async(req,res)=>{
@@ -465,6 +477,45 @@ async function calculateDeliveredOrderTotal() {
     }
   
   }
+  const  addrefferalmoneypag = async(req,res)=>{
+    try {
+      res.render("referraloffer")
+    }
+    catch (error) {
+    console.log(error.message);
+    }
+  }
+  const  addrefferalmoney = async(req,res)=>{
+    try {
+      const refferamout = req.body.referral_offer
+       const referraldata = await Referraloffer.find()
+      let id
+      if(referraldata.length === 0){
+       
+      const referral = new Referraloffer({
+        Offeramout:refferamout,
+      
+      })
+   
+     const refferaldata =  await referral.save()
+     
+     
+     
+      
+    }else{
+      const refferaldata =referraldata[0]
+      console.log(refferamout);
+      console.log(refferaldata._id);
+      const updateOffer = await Referraloffer.findByIdAndUpdate({_id:referraldata._id},{$set:{Offeramout:refferamout}})
+    }
+   
+      res.render("referraloffer",{message:"referral offer is succesfully added"})
+    }
+    catch (error) {
+    console.log(error.message);
+    }
+  }
+
 module.exports = {
     loadLogin,
     verifyLogin ,
@@ -475,5 +526,11 @@ module.exports = {
     orderListing,
     updateStatus,
     Logout,
-    getDashboard
+    getDashboard,
+    addrefferalmoneypag,
+  
+    loaddashboard,
+    addrefferalmoney
+
+    
 }

@@ -18,7 +18,7 @@ module.exports = {
                         res.render("login",{message:"Admin not verified please verify the admin"})
                      }else{
                         req.session.user_id = userData._id
-                        res.redirect('/admin/dashboard')
+                        res.render('dashboard')
                      }
                 }else{
                     res.render("login",{message:"password is incorrect"})

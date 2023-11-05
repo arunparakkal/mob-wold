@@ -37,7 +37,7 @@
                                                         <% if(category.active) { %>
                                                           <% if(products.some(product =>
                                                             product.categoryname === category.categoryname &&
-                                                            product.isListed)){ %>
+                                                            product.isListed== true)){ %>
                                                             <li><a
                                                                     href="/shop?categoryname=<%= category.categoryname %>">
                                                                     <%= category.categoryname %>

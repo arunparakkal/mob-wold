@@ -18,7 +18,7 @@ const isLogin = async(req,res,next)=>{
             next()
         }else{
              
-             res.render("users/home")
+            //  res.render("users/home")
             next()
    
         }

@@ -10,7 +10,7 @@ const isLogin = async(req,res,next)=>{
             
         }else{
             
-             res.render("login")
+            //  res.render("login")
             next()
    
         }
