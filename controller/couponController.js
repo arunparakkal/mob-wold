@@ -24,7 +24,18 @@ const couponList = async (req, res) => {
 
 const addCoupon = async(req, res) => {
   try {  
+   
       const { couponCode, description, discount, maxDiscount, minAmount, expirationDate } = req.body;
+     const existCoupons = await Coupon.find({couponCode:couponCode})
+     console.log("coup",existCoupons.length);
+     if(existCoupons.length !== 0){
+    return   res.status(400).json({  error: 'coupon is already exist' });
+     }
+    
+     if(existCoupons){
+     
+     
+     }
       const newCoupon = new Coupon({
           couponCode,
           description,
@@ -35,8 +46,7 @@ const addCoupon = async(req, res) => {
           isListed: true
       });
       await newCoupon.save();
-      console.log(newCoupon);
-
+      
       res.json({ message: 'Coupon added successfully' });
   } catch (error) {
       console.log(error);

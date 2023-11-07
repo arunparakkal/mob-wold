@@ -12,7 +12,7 @@ tableContainer.forEach((container)=>{
 
  
 
-console.log("heyyyy");
+
 increaseBtn.addEventListener('click',handleQty.bind(null,'increase',quantityInput,productId,productSubtotal))
 decreaseBtn.addEventListener('click',handleQty.bind(null,'decrease',quantityInput,productId,productSubtotal))
 

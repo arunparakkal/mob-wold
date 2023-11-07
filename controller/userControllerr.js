@@ -277,7 +277,7 @@ const loadShop = async (req, res) => {
     try {
         let products;
         const selectedCategory = req.query.categoryname || 'all';
-        console.log('selected', selectedCategory);
+       
         const categories = await Category.find();
         if (selectedCategory !== 'all') {
             const category = await Category.findOne({ categoryname: selectedCategory });
@@ -291,11 +291,12 @@ const loadShop = async (req, res) => {
                 products = await product.find();
                 console.log('shop', products.categoryname);
             }
-            console.log('categoryname', category);
+           
         } else {
             products = await product.find();
-            console.log('lala', products.productname);
+         
         }
+       
         res.render("users/shop", { products, categories, user: req.session.user_id });
     }
     catch (error) {
@@ -425,7 +426,7 @@ const AddtoCart = async (req, res) => {
         const { productId, quantity } = req.body
 
         const productData = await product.findOne({ _id: req.body.productId })
-        console.log(productData);
+       
         if (productData.quantity < 1) {
 
             return res.json({ noStock: true })
@@ -1098,16 +1099,37 @@ const cartQuantity = async (req, res) => {
 }
 const RemoveCart = async (req, res) => {
     try {
+       
+        
         const itemId = req.params.itemId
-        const result = await Cart.findOneAndUpdate(
-            { 'products._id': itemId }, // Find the cart that contains the product with the specified '_id'
-            { $pull: { products: { _id: itemId } } }, // Remove the product from the 'products' array
-            { new: true } // Return the updated cart after the removal
-        );
+        const carId = req.session.user_id
+        const cartData = await Cart.find({userId:carId});
+      const productData = cartData[0].products
+      const removeProudctId = productData._id
 
+        const existingProduct = productData.find((product) =>  { 
+
+          return  product._id.toString() === itemId
+           
+        });
+      const minusAmout = existingProduct.price;
+    
+         const Discount = cartData[0].cartTotal-minusAmout
+        
+
+      const updatetottal = await Cart.updateOne({userId:carId},{$set:{cartTotal:Discount,cartSubtotal:Discount}})
+        const PPdata = await Cart.findOne({userId:carId})
+        const PData = PPdata.cartTotal
+       
+      const result = await Cart.findOneAndUpdate(
+        { 'products._id': itemId }, // Find the cart that contains the product with the specified '_id'
+        { $pull: { products: { _id: itemId } } }, // Remove the product from the 'products' array
+        { new: true } // Return the updated cart after the removal
+    );
+    
         if (result) {
             const success = true;
-            res.json({ success });
+            res.json({ PData, success,result });
         } else {
             console.log('Cart item not found or product not removed.');
         }

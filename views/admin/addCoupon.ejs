@@ -164,7 +164,7 @@
                 } else {
                     $("#expirationDateError").text("");
                 }
-
+                
                 // If all fields are valid, submit the form
                 if (isValid) {
                     $.ajax({
@@ -176,6 +176,8 @@
                             window.location.href = '/admin/coupons'
                         },
                         error: function (error) {
+                            isValid = false
+                            $("#couponCodeError").text("coupon is already exist")
                             console.error("Error submitting the form", error);
                         }
                     })

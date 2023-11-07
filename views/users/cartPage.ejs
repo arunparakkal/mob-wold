@@ -31,11 +31,12 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                
                                 <% if (cart && cart.products.length > 0) { %>
                                     <% cart.products.forEach((product) => { %>
                                         <tr class="tableContainer" data-id="<%= product._id %>">
-                                            <td class="cart__product__item">
-                                                <img src="/uploadProduct/<%= product.productId.image[0] %>"
+                                            <td class="cart__product__item" style="width: 150px; height: 15;">
+                                                <img  src="/uploadProduct/<%= product.productId.image[0] %>"
                                                     alt="<%= product.productId.productname %>">
                                                 <div class="cart__product__item__title">
                                                     <h6><%= product.productId.productname %></h6>
@@ -52,7 +53,7 @@
                                             </td>
                                             <td class="cart__total">&#8377;<%= product.price %></td>
                                             <td class="cart__total productSubtotal">&#8377;<%= product.subTotal %></td>
-                                            <td class="cart__close"><span class="icon_close"></span></td>
+                                            <td class="cart__close" style="text-align: left;"><span class="icon_close"></span></td>
                                         </tr>
                                     <% }); %>
                                 <% } else { %>
@@ -82,28 +83,34 @@
             <div class="row">
                 <div class="col-lg-6">
                     <!-- <div class="discount__content">
-                  <h6>Discount codes</h6>
-                  <form action="#">
-                      <input type="text" placeholder="Enter your coupon code">
-                      <button type="submit" class="site-btn">Apply</button>
-                  </form>
-              </div> -->
+                        <h6>Discount codes</h6>
+                        <form action="#">
+                            <input type="text" placeholder="Enter your coupon code">
+                            <button type="submit" class="site-btn">Apply</button>
+                        </form>
+                    </div> -->
                 </div>
                 <div class="col-lg-4 offset-lg-2">
                     <% if (cart && cart.products.length > 0) { %>
                         <% cart.products.forEach((product) => { %>
-                    <div class="cart__total__procced">
-                        <h6>Cart total</h6>
-                        <ul>
-                            <li>Subtotal <span class="cartSubtotal">&#8377;<%= cart.cartSubtotal %></span></li>
-                            <li>Total <span class="cartTotal">&#8377;<%= cart.cartTotal %></span></li>
-                        </ul>
-                        <a href="checkout" class="primary-btn">Proceed to checkout</a>
-                    </div>
+                            <div class="cart__product__item">
+                                <!-- Display individual product details here -->
+                            </div>
+                        <% }); %>
+                        <div class="cart__total__procced">
+                            <h6>Cart total</h6>
+                            <ul>
+                                <li>Subtotal
+                                     
+                                    <span id="subTotal" class="cartSubtotal"><%= cart.cartSubtotal %></span><span>&#8377;</span></li>
+                                <li>Total <span id="cartTotal" class="cartTotal"><%= cart.cartTotal %></span><span>&#8377;</span></li>
+                            </ul>
+                            <a href="checkout" class="primary-btn">Proceed to checkout</a>
+                        </div>
+                    <% } %>
                 </div>
-               <% }) %>
-               <% } %>
             </div>
+            
         </div>
     </section>
     <!-- Shop Cart Section End -->
@@ -127,13 +134,17 @@
                         })
                             .then((response) => response.json())
                             .then((data) => {
-                                console.log(data)
+                               
                                 if (data.success) {
+                                    
                                     cartItem.remove()
+                                    const subTotal = document.getElementById('subTotal').textContent=data?.result?.cartSubtotal
+                                    const Total = document.getElementById('cartTotal').textContent=data?.result?.cartTotal
+                                    
+
+                                   
                                 }
-                                else {
-                                    console.error("Failed to remove item from the cart")
-                                }
+                            
                             })
                             .catch((error) => {
                                 console.log("erropage");

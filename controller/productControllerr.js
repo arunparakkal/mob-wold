@@ -37,12 +37,8 @@ const createProducts = async (req, res) => {
 
         const discount = (Productprice * specialOffer) / 100
         const salesprice = Productprice - discount
-
-        console.log('priceeee', salesprice);
-
-
+    
         console.log(productprice);
-
 
         await cropImage.crop(req);
         const images = req.files.map(file => file.filename);
@@ -110,14 +106,33 @@ const editUpdateProduct = async (req, res) => {
     try {
 
         const { categoryname, description, quantity, color } = req.body
+        const Categoryname = req.body.categoryname
+        console.log("--",req.body);
         const productname = req.body.productname.trim()
-        const productprice = req.body.Productprice
-        const salesprice = req.body.Salesprice
+        const Productprice = req.body.Productprice
+        const Salesprice = req.body.Salesprice
         const productId = req.body.productId
+        
+        const categories = await Category.findOne({ categoryname: categoryname }).lean()
+     
+        const productprice = Productprice
+        let specialOffer = 0;
+        if (categories.offer < Salesprice) {
 
+            specialOffer = Salesprice
+
+        } else {
+            specialOffer = categories.offer
+
+        }
+
+
+        const discount = (Productprice * specialOffer) / 100
+        const salesprice = productprice - discount
 
 
         if (req.files.length != 0) {
+            await cropImage.crop(req);
             const images = req.files.map(file => file.filename);
             const productData = await Product.findOne({ _id: req.body.productId })
             if (productData.image.length < 4) {

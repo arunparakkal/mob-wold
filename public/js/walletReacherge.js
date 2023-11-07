@@ -1,6 +1,7 @@
 
-
-document.getElementById('walletElement').addEventListener('click',(e)=>{
+const walletgetElementbyId =  document.getElementById('walletElement')
+  if(walletgetElementbyId){
+    walletgetElementbyId.addEventListener('click',(e)=>{
   e.preventDefault()
 
     Swal.fire({
@@ -70,3 +71,4 @@ document.getElementById('walletElement').addEventListener('click',(e)=>{
 
 
 })
+  }

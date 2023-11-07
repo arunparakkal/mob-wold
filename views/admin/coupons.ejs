@@ -14,6 +14,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
+                        
                         <div class="col-lg-9">
                             <header class="border-bottom mb-4 pb-4">
                                 <div class="row">
@@ -29,13 +30,18 @@
                                             <option>Expiration Date</option>
                                         </select> -->
                                     </div>
+                                
                                 </div>
                             </header> <!-- card-header end// -->
+                            
                             <div class="table-responsive">
                                 <table class="table table-hover">
+
+                                    
                                     <thead>
                                         <tr>
                                             <th>CouponCode</th>
+                                            
                                             <th>Discount</th>
                                             <th>Max Discount</th>
                                             <th >Min Amount</th>
@@ -47,6 +53,7 @@
                                         <% coupons.forEach(function(coupon) { %>
                                             <tr>
                                                 <td><%= coupon.couponCode %></td>
+                                                
                                                 <td><%= coupon.discount %></td>
                                                 <td><%= coupon.maxDiscount %></td>
                                                 <td><%= coupon.minAmount %></td>
@@ -71,6 +78,7 @@
                                         <% }); %>
                                     </tbody>
                                 </table>
+                                
                             </div> <!-- table-responsive.// -->
                         </div> <!-- col end// -->
                         <!-- <aside class="col-lg-3">

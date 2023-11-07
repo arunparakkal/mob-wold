@@ -116,6 +116,39 @@
                         <!-- Add any action buttons or icons here -->
                     </div>
             </header> <!-- card-header end// -->
+
+         
+            <style>
+                .table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+            
+                .table th,
+                .table td {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+            
+                .table th {
+                    background-color: #f2f2f2;
+                }
+            
+                .itemside .left {
+                    display: flex;
+                    align-items: center;
+                }
+            
+                .img-xs {
+                    width: 40px;
+                    height: 40px;
+                    object-fit: cover;
+                    border-radius: 5px;
+                }
+            </style>
+
+            
             <div class="card-body">
                 <div class="row mb-5 mt-3 order-info-wrap">
                     <div class="col-md-4">
@@ -185,7 +218,7 @@
                                                 <a class="itemside d-flex" href="#">
                                                     <div class="left">
                                                         <img src="/uploadProduct/<%= item.productId.image[0] %>"
-                                                            width="40" height="40" class="img-xs" alt="Item">
+                                                            width="80" height="80" class="img-thumbnail" alt="Item">
                                                     </div>
                                                 </a>
                                             </td>
@@ -202,7 +235,7 @@
                                                 <%= order.orderStatus %>
                                             </td>
                                         </tr>
-                                        <% }) %>
+                                    <% }) %>
                                 </tbody>
                             </table>
                         </div> <!-- table-responsive// -->
