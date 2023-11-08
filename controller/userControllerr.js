@@ -1160,7 +1160,7 @@ const listOrder = async (req, res) => {
         const user = await User.findById(userId);
 
         const perPage = 10; // Number of orders per page
-        const page = parseInt(req.query.page) || 1; // Get the page from the query parameter
+        const page = parseInt(req.query.page) || 1; 
 
         const totalOrders = await Order.countDocuments({ userId: userId });
         const totalPages = Math.ceil(totalOrders / perPage);
@@ -1170,7 +1170,7 @@ const listOrder = async (req, res) => {
             .sort({ orderDate: -1 })
             .skip((page - 1) * perPage)
             .limit(perPage);
-
+       
         res.render('users/orderlist', {
             order,
             user,

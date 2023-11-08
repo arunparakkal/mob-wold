@@ -148,7 +148,7 @@ const orderListing = async (req, res) => {
               deliveredDate: new Date(),
           };
         }
-        console.log('kgfk')
+      
         await order.save();
 
         res.json({ success:true });

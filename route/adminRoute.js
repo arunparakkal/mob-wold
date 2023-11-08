@@ -41,6 +41,7 @@ const categoryUpload = require("../multer/category")
 const productController = require("../controller/productControllerr")
 const couponController = require('../controller/couponController')
 const uploadProduct = require("../multer/product")
+ const dashBoardReportController = require("../controller/dashboardController")
 
 admin_route.get("/login",auth.isLogout,adminController.loadLogin)
 admin_route.get("/home" ,auth.isLogout, adminController.loaddashboard)
@@ -85,4 +86,7 @@ admin_route.get('/unlistproduct', auth.isLogin,productController.unlistproduct);
 admin_route.get('/listproduct', auth.isLogin,productController.listproduct);
 
 admin_route.post('/deleteeditproduct', auth.isLogin,productController.deteEditeproduct)
+
+
+admin_route.get("/salesreport",auth.isLogin,dashBoardReportController.LoadSalesRoprt)
 module.exports = admin_route
