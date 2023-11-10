@@ -274,6 +274,14 @@
                                                 onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
                                             <% } %>
                                     </div>
+                                    <div class="text-center mt-4">
+                                        <% if (order.orderStatus !=='Cancelled' && order.orderStatus !=='Returned' &&
+                                            order.orderStatus !=='Shipped' && order.orderStatus !=='Pending' ){ %>
+
+                                            <button class="btn btn-success"
+                                                onclick="returnOrder('<%= order._id %>')">Return</button>
+                                            <% } %>
+                                    </div>
 
                                 </td>
                             </tr>
@@ -330,6 +338,70 @@
                     }
                 });
             }
+        </script>
+        <script>
+
+function returnOrder(orderId) {
+    const returnReasons = [
+        'Item damaged',
+        'Wrong item received',
+        'Not satisfied with the product',
+        'Ordered by mistake',
+        'Other'
+    ];
+
+    const optionsHTML = returnReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('');
+
+    Swal.fire({
+        title: 'Return Order',
+        html: `
+            <label for="reason">Select a reason for return:</label>
+            <select id="reason" class="swal2-select" required>
+                <option value="" disabled selected>Select a reason</option>
+                ${optionsHTML}
+            </select>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Return Order',
+        preConfirm: () => {
+            const selectedReason = document.getElementById('reason').value;
+            if (selectedReason === "") {
+                Swal.showValidationMessage('Please select a reason for return');
+            }
+            return { selectedReason };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const { selectedReason } = result.value;
+
+            $.ajax({
+                url: '/orderReturn',
+                method: 'POST',
+                data: JSON.stringify({ orderId, selectedReason }),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.success) {
+                        console.log(response);
+                        window.location.href = '/orderdetail/' + orderId;
+                    } else {
+                        if (response.error === 'NotDelivered') {
+                            Swal.fire('Cannot return the order', 'The order has not been delivered yet.', 'error');
+                        } else if (response.error === 'Over10Days') {
+                            Swal.fire('Return Not Possible', 'You cannot return an order placed more than 10 days ago.', 'error');
+                        } else {
+                            Swal.fire('Error', 'An error occurred while returning the order.', 'error');
+                        }
+                    }
+                },
+                error: function () {
+                    console.log('Error: An error occurred while making the AJAX request.');
+                }
+            });
+        }
+    });
+}
+    
         </script>
         <!-- Footer Section Begin -->
 

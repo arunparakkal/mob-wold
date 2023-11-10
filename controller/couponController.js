@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Coupon = require('../model/couponModel')
 
-const couponList = async (req, res) => {
+const couponCreate = async (req, res) => {
     try {
-  
+  console.log('cou')
         const coupons = await Coupon.find()
       res.render("addCoupon",{coupons});
     } catch (error) {
@@ -21,42 +21,30 @@ const couponList = async (req, res) => {
     }
   }
  
-
-const addCoupon = async(req, res) => {
-  try {  
-   
+  const addCoupon = async (req, res) => {
+    try {
       const { couponCode, description, discount, maxDiscount, minAmount, expirationDate } = req.body;
-     const existCoupons = await Coupon.find({couponCode:couponCode})
-     console.log("coup",existCoupons.length);
-     if(existCoupons.length !== 0){
-    return   res.status(400).json({  error: 'coupon is already exist' });
-     }
-    
-     if(existCoupons){
-     
-     
-     }
+      console.log('MQIN',req.body);
       const newCoupon = new Coupon({
-          couponCode,
-          description,
-          discount,
-          maxDiscount,
-          minAmount,
-          expirationDate,
-          isListed: true
+        couponCode,
+        description,
+        discount,
+        maxDiscount,
+        minAmount,
+        expirationDate,
+        isListed: true
       });
       await newCoupon.save();
-      
+  
       res.json({ message: 'Coupon added successfully' });
-  } catch (error) {
+    } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Internal server error' });
+    }
   }
-}
-
 const editCouponPage = async(req, res)=>{
   try {
-   
+    console.log('fgi')
     const coupon = await Coupon.findById(req.params.id);
 
     if (!coupon) {
@@ -71,7 +59,7 @@ const editCouponPage = async(req, res)=>{
 
 const editCoupon =async(req, res)=>{
   try{
-    
+    console.log('fgi')
     const couponId = req.params.id;
     const updates = req.body;
 
@@ -150,7 +138,7 @@ const applyCoupon = async (req, res) => {
   }
 };
   module.exports = {
-    couponList,
+    couponCreate,
     addCoupon,
     coupons,
     editCouponPage,

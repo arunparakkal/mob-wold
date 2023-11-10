@@ -78,13 +78,16 @@ userRoute.post('/verifyPayment',auth.isLogin,UserController.verifyRazorpayPaymen
 userRoute.get('/coupons',auth.isLogin,couponController.couponGet)
 userRoute.post('/couponget',auth.isLogin,couponController.applyCoupon)
 userRoute.post('/ordercancel',auth.isLogin,UserController.cancelOrder)
-
+userRoute.post('/orderReturn',auth.isLogin,UserController.returnOrder)
 userRoute.get('/forgotpassword',auth.isLogout,UserController.Foregetpassword)
 userRoute.post('/forgotverify',auth.isLogout,UserController.Foregotverify)
 userRoute.get('/forgot-password',auth.isLogout,UserController.ForegotpasswordLoad)
 userRoute.post('/forgot-password',UserController.resetpassword)
 
 userRoute.post("/walletrecharge",auth.isLogin,UserController.Walletrecharge)
+userRoute.get("/wallethistory",auth.isLogin,UserController.walletHistory)
+userRoute.get("/404-page",auth.isLogin,UserController.errorpage)
+
 
 
 

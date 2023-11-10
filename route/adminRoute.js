@@ -44,7 +44,7 @@ const uploadProduct = require("../multer/product")
  const dashBoardReportController = require("../controller/dashboardController")
 
 admin_route.get("/login",auth.isLogout,adminController.loadLogin)
-admin_route.get("/home" ,auth.isLogout, adminController.loaddashboard)
+admin_route.get("/dashboard",auth.isLogin, adminController.loaddashboard)
 admin_route.post("/home" ,auth.isLogout, adminController.verifyLogin)
 admin_route.get("/userlist",auth.isLogin,adminController.loadUser)
 admin_route.get("/logout",auth.isLogin,adminController.Logout)
@@ -62,7 +62,7 @@ admin_route.get("/products",auth.isLogin,productController.products)
 admin_route.get("/list",auth.isLogin,categoryController.List)
 admin_route.get("/unlist",auth.isLogin,categoryController.Unlist)
 
-admin_route.get('/couponlist',auth.isLogin,couponController.couponList)
+admin_route.get('/couponCreate',auth.isLogin,couponController.couponCreate)
 admin_route.get('/coupons',auth.isLogin,couponController.coupons)
 admin_route.post('/addCoupon',auth.isLogin,couponController.addCoupon)
 admin_route.get('/edit-coupon/:id',auth.isLogin,couponController.editCouponPage)
@@ -88,5 +88,6 @@ admin_route.get('/listproduct', auth.isLogin,productController.listproduct);
 admin_route.post('/deleteeditproduct', auth.isLogin,productController.deteEditeproduct)
 
 
-admin_route.get("/salesreport",auth.isLogin,dashBoardReportController.LoadSalesRoprt)
+admin_route.get("/salesreport", auth.isLogin,dashBoardReportController.salesReport)
+admin_route.get('/reports/sales/download/:type',auth.isLogin, dashBoardReportController.adminDownloadReports);
 module.exports = admin_route

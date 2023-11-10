@@ -1,4 +1,22 @@
 <%- include("../layouts/header")%>
+<style>
+    .btn-pagination {
+		display: inline-block;
+		padding: 8px 16px;
+		background-color: #01060b;
+		color: #fff;
+		text-decoration: none;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		margin: 2px;
+	}
+
+	.btn-pagination.current-page {
+		background-color: #ccc;
+		color: #333;
+	}
+</style>
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option">
         <div class="container">
@@ -35,15 +53,13 @@
                                                 <ul>
                                                     <% categories.forEach(category=> { %>
                                                         <% if(category.active) { %>
-                                                          <% if(products.some(product =>
-                                                            product.categoryname === category.categoryname &&
-                                                            product.isListed== true)){ %>
+                                                         
                                                             <li><a
                                                                     href="/shop?categoryname=<%= category.categoryname %>">
                                                                     <%= category.categoryname %>
                                                                 </a></li>
                                                             <% } %>
-                                                                <% } %>
+                                                               
                                                                     <% }); %>
                                                 </ul>
                                             </div>
@@ -246,7 +262,7 @@
                                             <ul class="product__hover">
                                                 <li><a href="productdetail?products=<%= product._id %>"><span
                                                             class="arrow_expand"></span></a></li>
-                                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                                <!-- <li><a href="#"><span class="icon_heart_alt"></span></a></li> -->
                                                 <li><a href="/cart" class="addtocartbtn"
                                                         data-productId="<%= product._id %>"><span
                                                             class="icon_bag_alt"></span></a></li>
@@ -278,20 +294,22 @@
                                 <% } %>
                                     <% }) %>
                     </div>
-
-                </div>
-
-
-
-
-                <div class="col-lg-12 text-center">
-                    <div class="pagination__option">
-                        <a href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#"><i class="fa fa-angle-right"></i></a>
+                    <div class=" p-5 text-center d-flex justify-content-center ">
+                        <div class="pagination">
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <a href="?page=<%= i %>"
+                                    class="btn-pagination<%= i === currentPage ? ' current-page' : '' %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+                        </div>
+    
                     </div>
                 </div>
+
+
+
+               
             </div>
         </div>
         </div>

@@ -3,13 +3,15 @@
  const Order = require('../model/orderModel')
  const Referraloffer = require("../model/refferalmoney")
  const Category = require("../model/categoryModel")
- 
+ const Product = require("../model/product")
+
 const loadLogin = async(req,res)=>{
     try{
         res.render("login")
     }
     catch(error){
         console.log(error.message);
+        
     }
 }
 const Logout = async (req, res) => {
@@ -21,6 +23,7 @@ const Logout = async (req, res) => {
     }
     catch (Error) {
         console.log(Error.message);
+      
     }
 }
 const verifyLogin = async(req,res)=>{
@@ -30,17 +33,10 @@ const verifyLogin = async(req,res)=>{
     }
     catch(error){
         console.log(error.message);
+       
     }
 }
-const loaddashboard = async(req,res)=>{
 
-  try{
-    res.render("dashboard")
-  }
-  catch(error){
-      console.log(error.message);
-  }
-}
 
 const loadUser = async(req,res)=>{
 
@@ -52,6 +48,7 @@ const loadUser = async(req,res)=>{
     }
     catch(error){
         console.log(error.message);
+      
     }
 }
 const blockUser = async(req,res)=>{
@@ -61,6 +58,7 @@ const blockUser = async(req,res)=>{
     }
     catch(error){
         console.log(error.message);
+        
     }
 }
 const unblockUser = async(req,res)=>{
@@ -69,6 +67,7 @@ const unblockUser = async(req,res)=>{
     }
     catch(error){
         console.log(error.message);
+       
     }
 }
 
@@ -105,6 +104,7 @@ const orderListing = async (req, res) => {
       });
     } catch (error) {
       console.log(error.message);
+      res.render('404',{user:req.session.user_id})
       res.status(500).send('Internal Server Error');
     }
   };
@@ -278,6 +278,7 @@ async function calculateDeliveredOrderTotal() {
       return dailySalesData;
     } catch (error) {
       throw error;
+     
     }
   }
   
@@ -329,7 +330,7 @@ async function calculateDeliveredOrderTotal() {
       const onlineOrderData = await Order.aggregate([
         {
           $match: {
-            paymentMethod: 'online',
+            paymentmethod: 'online',
             orderStatus: 'Delivered',
           },
         },
@@ -354,7 +355,7 @@ async function calculateDeliveredOrderTotal() {
       const codOrderData = await Order.aggregate([
         {
           $match: {
-            paymentMethod: 'cod',
+            paymentmethod: 'cod',
             orderStatus: 'Delivered',
           },
         },
@@ -425,7 +426,7 @@ async function calculateDeliveredOrderTotal() {
   
   async function calculateListedCategoryCount() {
     try {
-      const listedCategoryCount = await Category.countDocuments({ isListed: true });
+      const listedCategoryCount = await Category.countDocuments({ active: true });
   
       return listedCategoryCount;
     } catch (error) {
@@ -435,29 +436,33 @@ async function calculateDeliveredOrderTotal() {
   
   
   
-  const getDashboard = async (req, res) => {
+  const loaddashboard = async (req, res) => {
     try {
-  
-      const ordersData = await calculateDeliveredOrderTotal()
+     const ordersData = await calculateDeliveredOrderTotal()
+      console.log(ordersData,"get dashBorde rsData")
       const orders = ordersData[0]
+      console.log(orders,"get dashBordorders")
       const categorySales = await calculateCategorySales()
+      console.log(categorySales,"get dashBorders categorySales")
       const salesData = await calculateDailySales()
+      console.log(salesData,"get dashBorders  salesData")
       const salesCount = await calculateOrderCountByDate()
+      
+      console.log(salesCount,"get dashBordersData salesCount")
       const categoryCount = await calculateListedCategoryCount()
+      
+
+      console.log(categoryCount ,"get dashBorders categoryCount ")
       const productsCount = await calculateProductsCount()
+        
+      console.log(productsCount,"get dashBorders productsCount")
       const onlinePay = await calculateOnlineOrderCountAndTotal()
+      console.log(onlinePay,"get dashBord onlinePay")
       const codPay = await calculateCodOrderCountAndTotal()
+      
+      console.log(codPay,"get dashBord codPay")
       const latestorders = await getLatestOrders()
-  
-         console.log(ordersData,"get dashBorde rsData")
-       console.log(orders,"get dashBordorders")
-         console.log(categorySales,"get dashBorders categorySales")
-         console.log(salesData,"get dashBorders  salesData")
-         console.log(salesCount,"get dashBordersData salesCount")
-         console.log(categoryCount ,"get dashBorders categoryCount ")
-         console.log(productsCount,"get dashBorders productsCount")
-         console.log(onlinePay,"get dashBord onlinePay")
-         console.log(codPay,"get dashBord codPay")
+
          console.log(latestorders,"get dashBord latestorders")
          console.log("productsCount:", productsCount);
          console.log("categoryCount:", categoryCount);
@@ -473,7 +478,7 @@ async function calculateDeliveredOrderTotal() {
   
     }
     catch (error) {
-      res.render('/error')
+     console.log(error.message)
     }
   
   }
@@ -526,7 +531,7 @@ module.exports = {
     orderListing,
     updateStatus,
     Logout,
-    getDashboard,
+
     addrefferalmoneypag,
   
     loaddashboard,

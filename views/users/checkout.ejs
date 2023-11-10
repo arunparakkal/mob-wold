@@ -251,8 +251,9 @@
                         data: JSON.stringify(formData),
                         contentType: "application/json",
                         success: function (response) {
-                            
+                            console.log("nodwallet",response.nowallet);
                             if (!response.nowallet) {
+                                console.log("entring my");
                                 displayInsufficientBalanceError(response.error);
                             }
 

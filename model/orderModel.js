@@ -1,47 +1,47 @@
 const mongoose = require("mongoose")
 const orderSchema = mongoose.Schema({
-  userId:{
-    type:mongoose.Schema.ObjectId,
-    ref:"User"
+  userId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User"
   },
-  orderDate:{
-    type:Date,
-    default:Date.now
+  orderDate: {
+    type: Date,
+    default: Date.now
   },
-  totalAmout:{
-    type:Number,
-    require:true
+  totalAmout: {
+    type: Number,
+    require: true
   },
-  products:[{
-    productId:{
-      type:mongoose.Schema.ObjectId,
-      ref:"Product",
-      required:true
+  products: [{
+    productId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Product",
+      required: true
     },
-    quantity:{
-      type:Number,
-      require:true
+    quantity: {
+      type: Number,
+      require: true
     },
-   
-    price:{
-      type:Number,
-      require:true
+
+    price: {
+      type: Number,
+      require: true
     }
   },
   ],
   orderStatus: {
-		type: String,
-		enum: ['Pending','Cancelled','Shipped','Delivered','Returned','placed'],
-		default: 'Pending',
-	},
-  idPaid:{
-    type:Boolean,
-    default:false
+    type: String,
+    enum: ['Pending', 'Cancelled', 'Shipped', 'Delivered', 'Returned'],
+    default: 'Pending',
   },
-  address:{
-    Name:{
-      type:String,
-      require:true
+  idPaid: {
+    type: Boolean,
+    default: false
+  },
+  address: {
+    Name: {
+      type: String,
+      require: true
     },
     Number: {
       type: Number,
@@ -68,20 +68,24 @@ const orderSchema = mongoose.Schema({
       type: String,
       required: true,
     },
-   
+
 
   },
-  paymentmethod:{
-    type:String,
-    require:true
+  paymentmethod: {
+    type: String,
+    require: true
   },
-  totalprice:{
-    type:Number,
-    require:true
+  reasonResponse: {
+    type: String,
+
   },
-  walletBalance:{
-    type:Number,
-    require:true
+  totalprice: {
+    type: Number,
+    require: true
+  },
+  walletBalance: {
+    type: Number,
+    require: true
   }
 })
-module.exports = mongoose.model("Order",orderSchema)
+module.exports = mongoose.model("Order", orderSchema)

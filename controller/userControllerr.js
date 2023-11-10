@@ -18,6 +18,7 @@ const Coupon = require('../model/couponModel')
 
 
 
+
 const Razorpay = require("razorpay");
 const { fail } = require("assert");
 const { Script } = require("vm");
@@ -34,6 +35,7 @@ const passwordHash = async (password) => {
     }
     catch (Error) {
         console.log(Error.message);
+        res.render('404', { user: req.session.user_id })
     }
 }
 const sendVerifyMail = async (name, email, otp) => {
@@ -70,12 +72,14 @@ const sendVerifyMail = async (name, email, otp) => {
 }
 const LoadHome = async (req, res) => {
     try {
-
-        res.render("users/home.ejs");
+        const products = await product.find({isListed: true})
+   
+        res.render("users/home", { products });
 
     }
     catch (Error) {
         console.log(Error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const Logout = async (req, res) => {
@@ -91,15 +95,16 @@ const Logout = async (req, res) => {
 const LoadHomee = async (req, res) => {
     try {
 
-
+        const products = await product.find({isListed: true})
         const Id = req.session.user_id
 
         const userData = await User.findOne({ _id: Id });
-       return res.render("users/home", { user: req.session.user_id });
+        return res.render("users/home", { products, user: req.session.user_id });
 
     }
     catch (Error) {
         console.log(Error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -111,7 +116,7 @@ const loadsignUp = async (req, res) => {
     }
     catch (error) {
         console.log(error.message)
-
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -156,12 +161,13 @@ const inserUser = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const recentOpt = async (req, res) => {
     try {
         const userId = req.query.userId.trim();
-        console.log(userId,req.query.userId);
+        console.log(userId, req.query.userId);
         const otp = randomString.generate({ length: 4, charset: "numeric" })
         objj.OTP = otp
         console.log("recent", objj.OTP);
@@ -171,6 +177,7 @@ const recentOpt = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -182,6 +189,7 @@ const otppage = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -200,15 +208,18 @@ const VerifyOtp = async (req, res) => {
 
         if (objj.OTP === Newopt) {
             delete objj.OTP
+            console.log("new", Newopt);
+            console.log("obj", objj.OTP);
             const id = req.body.userId.trim()
 
             const udpateinfo = await User.updateOne({ _id: id }, { $set: { is_verified: 1 } })
-
+            console.log("kdjkdjd");
             res.redirect("/")
         }
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -220,6 +231,7 @@ const loadLogin = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404')
     }
 }
 
@@ -254,55 +266,126 @@ const verifyLogin = async (req, res) => {
     }
     catch (error) {
         console.log(error.message)
+        res.render('users/404')
     }
 
 }
+const loadShop = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const itemsPerPage = 3;
+        let totalProductsCount;
+        let products;
+        let totalPages;
+
+        const selectedCategory = req.query.categoryname || 'all';
+
+        const categories = await Category.aggregate([
+            {
+                $match: { active: true },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'categoryname',
+                    foreignField: 'categoryname',
+                    as: 'products',
+                },
+            },
+            {
+                $addFields: {
+                    hasListedProducts: {
+                        $gt: [{ $size: '$products' }, 0],
+                    },
+                },
+            },
+            {
+                $match: { hasListedProducts: true },
+            },
+        ]);
+
+        if (selectedCategory !== 'all') {
+            const category = await Category.findOne({ categoryname: selectedCategory });
+
+            if (category) {
+                totalProductsCount = await product.countDocuments({
+                    categoryname: category.categoryname,
+                    isListed: true, // Filter for listed products
+                });
+
+                products = await product.find({
+                    categoryname: category.categoryname,
+                    isListed: true, // Filter for listed products
+                })
+                    .sort({ date: -1 })
+                    .skip((page - 1) * itemsPerPage)
+                    .limit(itemsPerPage)
+                    .lean();
+            } else {
+                totalProductsCount = 0;
+                products = [];
+            }
+        } else {
+            totalProductsCount = await product.countDocuments({ isListed: true }); // Filter for listed products
+            products = await product.find({ isListed: true }) // Filter for listed products
+                .sort({ date: -1 })
+                .skip((page - 1) * itemsPerPage)
+                .limit(itemsPerPage)
+                .lean();
+        }
+
+        totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+
+        res.render('users/shop', {
+            products,
+            categories,
+            currentPage: page,
+            totalPages,
+            user: req.session.user_id,
+            selectedCategory, // Pass the selected category to the view for highlighting in the UI
+        });
+    } catch (error) {
+        console.error('Error in loadShop:', error);
+        res.render('users/404', { user: req.session.user_id });
+    }
+};
+
+
+
+
+
 // const loadShop = async (req, res) => {
 //     try {
-//         const products = await product.find()
+
+//         let products;
 //         const selectedCategory = req.query.categoryname || 'all';
-//         console.log('selected',selectedCategory)
-//         const categories = await Category.find()
+
+//         const categories = await Category.find();
 //         if (selectedCategory !== 'all') {
 //             const category = await Category.findOne({ categoryname: selectedCategory });
-//             console.log('categoryname', category);
+
+
+//             if (category) {
+//                 products = await product.find({ categoryname: category.categoryname });
+
+
+//             } else {
+//                 products = await product.find();
+//                 console.log('shop', products.categoryname);
+//             }
+
+//         } else {
+//             products = await product.find();
+
 //         }
-//         res.render("users/shop", { products,categories, user: req.session.user_id })
+
+//         res.render("users/shop", { products, categories, user: req.session.user_id });
 //     }
 //     catch (error) {
 //         console.log(error.message);
+//         res.render('users/404',{user:req.session.user_id})
 //     }
-// }
-const loadShop = async (req, res) => {
-    try {
-        let products;
-        const selectedCategory = req.query.categoryname || 'all';
-       
-        const categories = await Category.find();
-        if (selectedCategory !== 'all') {
-            const category = await Category.findOne({ categoryname: selectedCategory });
-           
-            
-            if (category) {
-                products = await product.find({ categoryname: category.categoryname });
-
-                
-            } else {
-                products = await product.find();
-                console.log('shop', products.categoryname);
-            }
-           
-        } else {
-            products = await product.find();
-         
-        }
-       
-        res.render("users/shop", { products, categories, user: req.session.user_id });
-    }
-    catch (error) {
-        console.log(error.message);
-    }
-};
+// };
 
 const loadprofile = async (req, res) => {
     try {
@@ -320,6 +403,7 @@ const loadprofile = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const editProfile = async (req, res) => {
@@ -329,6 +413,7 @@ const editProfile = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const updateUser = async (req, res) => {
@@ -348,6 +433,7 @@ const updateUser = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const LoadAddress = async (req, res) => {
@@ -356,6 +442,7 @@ const LoadAddress = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const insertData = async (req, res) => {
@@ -397,6 +484,7 @@ const insertData = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404')
     }
 }
 
@@ -409,6 +497,7 @@ const LoadAllAddress = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const LoadCart = async (req, res) => {
@@ -419,6 +508,7 @@ const LoadCart = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const AddtoCart = async (req, res) => {
@@ -426,7 +516,7 @@ const AddtoCart = async (req, res) => {
         const { productId, quantity } = req.body
 
         const productData = await product.findOne({ _id: req.body.productId })
-       
+
         if (productData.quantity < 1) {
 
             return res.json({ noStock: true })
@@ -476,6 +566,7 @@ const AddtoCart = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -488,6 +579,7 @@ const Checkoutaddress = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const Checkout = async (req, res) => {
@@ -507,7 +599,7 @@ const Checkout = async (req, res) => {
                 const selectedCoupon = await Coupon.findOne({ couponCode: couponCode });
                 if (selectedCoupon) {
                     discountAmount = (calculateTotalPrice * selectedCoupon.discount) / 100;
-                    console.log('hh', selectedCoupon.maxDiscount)
+
 
                     if (discountAmount > selectedCoupon.maxDiscount) {
                         discountAmount = selectedCoupon.maxDiscount;
@@ -537,119 +629,12 @@ const Checkout = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
         // Handle the error, e.g., show an error message to the user
     }
 }
 
-// const Checkout = async (req, res) => {
-//     try {
-//         const couponCode = req.query.couponCode;
-//         const cart = await Cart.findOne({ userId: req.session.user_id }).populate('products.productId');
 
-//         if (cart) {
-//             const products = cart.products;
-//             let calculateTotalPrice = 0;
-
-//             for (const cartProduct of products) {
-//                 const cartQuantity = cartProduct.quantity;
-//                 calculateTotalPrice += cartProduct.productId.productprice * cartQuantity;
-//             }
-
-//             let discountAmount = 0;
-//             let coupon = null;
-//            
-//             if (couponCode) {
-//                 const selectedCoupon = await Coupon.findOne({ couponCode: couponCode });
-//                 if (selectedCoupon) {
-//                     discountAmount = (calculateTotalPrice * selectedCoupon.discount) / 100;
-//                     if (discountAmount > selectedCoupon.maxAmount) {
-//                         discountAmount = selectedCoupon.maxAmount;
-//                     }
-//                     coupon = selectedCoupon;
-//                 } else {
-//                     console.log('Selected coupon not found');
-//                 }
-//             }
-
-//             calculateTotalPrice -= discountAmount;
-//             req.session.calculateTotal = calculateTotalPrice
-//             const AddresData = await Address.find({ userId: req.session.user_id });
-//             const UserAddress = AddresData[0].addresses;
-//             const defaultAddress = UserAddress.find(address => address.isDefault == true);
-
-
-//             const discount = discountAmount;
-//             console.log('discount',discount)
-//             const coupons = await Coupon.find();
-//             res.render("users/checkout", { cart, defaultAddress, user: req.session.user_id, coupon ,calculateTotalPrice,discount,});
-//         } else {
-
-//             res.render("users/checkout", { user: req.session.user_id });
-//         }
-//     } catch (error) {
-//         console.log(error.message);
-
-//     }
-// }
-
-// const Checkout = async(req,res)=>{
-//     console.log('keri')
-//     try{
-//         const couponCode = req.query.couponCode;
-//     console.log('cpdfj',couponCode)
-//     const cart = JSON.parse(req.query.cart) 
-//     console.log('Parsed cart:', cart);
-
-//         const AddresData = await Address.find({userId:req.session.user_id})
-//        const UserAddress = await AddresData[0].addresses
-//         const defaultAddress = UserAddress.find(address =>address.isDefault == true )
-
-//         let discountAmount = 0;
-//         let coupon = null;
-//         let calculateTotalPrice = cart.cartTotal 
-//         console.log('clu',calculateTotalPrice)
-//         console.log('price',cart.products)
-//         if (cart) {
-//             for (const cartProduct of cart.products) {
-//                 // const product = cartProduct.product;
-//                 const cartQuantity = cartProduct.quantity;
-//                 calculateTotalPrice += cart.products.productprice * cartQuantity;
-
-//             }
-//         }
-
-//         req.session.calculateTotalPrice = cart.cartTotal;
-//         console.log('ree',req.session.calculateTotalPrice)
-
-//         if (couponCode) {
-//             const selectedCoupon = await Coupon.findOne({ couponCode: couponCode });
-//             console.log('selecte',selectedCoupon)
-//             if (selectedCoupon) {
-
-//                 discountAmount = (calculateTotalPrice * selectedCoupon.discount) / 100;
-//                 if (discountAmount > selectedCoupon.maxAmount) {
-//                     discountAmount = selectedCoupon.maxAmount
-
-//                 }
-//                 coupon = selectedCoupon;
-
-//             } else {
-//                 console.log('Selected coupon not found');
-//             }
-//         }
-//         calculateTotalPrice -= discountAmount;
-//         req.session.totalAmountCoupon = calculateTotalPrice
-//         const discount = discountAmount;
-//         const coupons = await Coupon.find();
-
-
-//        res.render("users/checkout",{cart,defaultAddress, user:req.session.user_id,coupon,discount})
-
-//     }
-//     catch(error){
-//         console.log(error.message);
-//     }
-// }
 const Default = async (req, res) => {
     try {
         const addId = req.query.addressId
@@ -673,6 +658,7 @@ const Default = async (req, res) => {
     }
     catch (error) {
         console.log(error.message)
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const Changepassword = async (req, res) => {
@@ -680,14 +666,15 @@ const Changepassword = async (req, res) => {
 
         let message;
 
-        if(req?.query?.message){
-          message=req?.query?.message
+        if (req?.query?.message) {
+            message = req?.query?.message
         }
 
-        res.render("users/pwdupdate",{message})
+        res.render("users/pwdupdate", { message })
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const addPassword = async (req, res) => {
@@ -709,6 +696,7 @@ const addPassword = async (req, res) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -794,17 +782,29 @@ const placeOrder = async (req, res) => {
                 return res.json({ nowallet: false, error: "Wallet have no enough balance" })
             } else {
 
-                const walletData = await Wallet.findOne({ user: req.session.user_id })
-                const balanceamt = walletData.balance - calculateTotalPrice
-                const walletupdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance: balanceamt } })
+                // const walletData = await Wallet.findOne({ user: req.session.user_id })
+                // const balanceamt = walletData.balance - calculateTotalPrice
+                // const walletupdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance: balanceamt } })
+
+                const wallet = await Wallet.findOne({ user: req.session.user_id });
+
+                if (wallet) {
+                    const debitTransaction = {
+                        Amount: calculateTotalPrice,
+                        transactionType: 'debit',
+                    };
 
 
+                    wallet.transactions.push(debitTransaction);
+                    wallet.balance -= debitTransaction.Amount; // Update the balance accordingly
+
+
+                }
 
                 const newOrder = new Order({
                     userId: req.session.user_id,
                     totalAmount: cart.cartTotal, // Corrected property name
                     products: cart.products,
-                    orderStatus: "placed", // Corrected property name
                     isPaid: false,
                     address: {
                         Name: address.name,
@@ -818,10 +818,11 @@ const placeOrder = async (req, res) => {
 
                     totalprice: calculateTotalPrice,
                     paymentmethod: paymentMethod,
-                    walletBalance: balanceamt
+                    walletBalance: wallet.balance
                 });
-
+                await wallet.save();
                 await newOrder.save();
+
 
                 cart.products = [];
                 await cart.save();
@@ -835,74 +836,10 @@ const placeOrder = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ success: false, error: error.message });
+
     }
 };
 
-// const placeOrder = async (req, res) => {
-//     try {
-//         const address = req.body.address;
-//         const cart = req.body.cart;
-//         const paymentMethod = req.body.paymentmethod;
-//         let calculateTotalPrice = 0;
-
-//         if (req.session.calculateTotalPrice) {
-//             calculateTotalPrice = req.session.totalAmountCoupon
-
-//         }
-//          cart.cartTotal = calculateTotalPrice;
-//          console.log('priceTotal',cart.cartTotal)
-//         if (paymentMethod === 'cod') {
-//             const newOrder = new Order({
-//                 userId: req.session.user_id,
-//                 totalAmout: cart.cartTotal,
-//                 products: cart.products,
-//                 ordeStatus: "Pending",
-//                 idPaid: false,
-//                 address: {
-//                     Name: address.name,
-//                     Number: address.mobile,
-//                     addressLine1: address.address1,
-//                     addressLine2: address.address2,
-//                     state: address.state,
-//                     postalCode: address.postalCode,
-//                     country: address.country,
-//                 },
-//                 paymentmethod: paymentMethod, // Corrected property name
-//             });
-//             await newOrder.save();
-//         } else if (paymentMethod === "online") {
-//             const newOrder = new Order({
-//                 userId: req.session.user_id,
-//                 totalAmout: cart.cartTotal,
-//                 products: cart.products,
-//                 ordeStatus: "Pending",
-//                 idPaid: false,
-//                 address: {
-//                     Name: address.name,
-//                     Number: address.mobile,
-//                     addressLine1: address.address1,
-//                     addressLine2: address.address2,
-//                     state: address.state,
-//                     postalCode: address.postalCode,
-//                     country: address.country,
-//                 },
-//                 paymentmethod: paymentMethod, // Corrected property name
-//             });
-//             const savedOrder = await newOrder.save()
-//             console.log('saved', savedOrder)
-//             const generateOrder = await generateOrderRazorpay(
-//                 savedOrder._id,
-//                 cart.cartTotal
-//             )
-//             res.json({ generateOrder, method: 'online' });
-//         }
-
-
-//     } catch (error) {
-//         console.error(error.message);
-//         return res.status(500).json({ success: false, error: error.message });
-//     }
-// };
 
 const generateOrderRazorpay = (orderId, total) => {
     return new Promise((resolve, reject) => {
@@ -973,71 +910,7 @@ const verifyRazorpayPayment = async (req, res) => {
     }
 }
 
-// const placeOrder = async (req, res) => {
-//     try {
-//         const address = req.body.address;
-//         const cart = req.body.cart;
-//         const paymentMethod = req.body.paymentmethod; // Extract the payment method from the request
 
-//         const newOrder = new Order({
-//             userId: req.session.user_id,
-//             totalAmout: cart.cartTotal,
-//             products: cart.products,
-//             ordeStatus: "Pending",
-//             idPaid: false,
-//             address: {
-//                 Name: address.name,
-//                 Number: address.mobile,
-//                 addressLine1: address.address1,
-//                 addressLine2: address.address2,
-//                 state: address.state,
-//                 postalCode: address.postalCode,
-//                 country: address.country,
-//             },
-//             paymentmethod: paymentMethod, // Corrected property name
-//         });
-
-//         await newOrder.save();
-
-//         res.json({ success: true });
-//     } catch (error) {
-//         console.error(error.message);
-//         return res.status(500).json({ success: false, error: error.message });
-//     }
-// };
-
-
-// const placeOrder = async(req,res)=>{
-//     try {
-//         const address = req.body.address;
-//         const cart = req.body.cart;
-//         console.log(cart.products);
-
-//         const newOrder = new Order({
-//             userId:cart.userId,
-//             totalAmout:cart.cartTotal,
-//             products:cart.products,
-//             ordeStatus: "Pending",
-//             idPaid: false,
-//             address:{
-//                 Name: address.name,
-//                 Number: address.mobile,
-//                 addressLine1: address.address1,
-//                 addressLine2: address.address2,
-//                 state: address.state,
-//                 postalCode: address.postalCode,
-//                 country: address.country,
-//             }
-//         })
-//         newOrder.save()  
-//         res.json({ success: true });
-//       }
-//     catch(error){
-//         console.log(error.message)
-//         return res.status(500).json({success:false,error:error.message})
-
-//     }
-// }
 
 const cartQuantity = async (req, res) => {
     try {
@@ -1094,42 +967,43 @@ const cartQuantity = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 
 }
 const RemoveCart = async (req, res) => {
     try {
-       
-        
+
+
         const itemId = req.params.itemId
         const carId = req.session.user_id
-        const cartData = await Cart.find({userId:carId});
-      const productData = cartData[0].products
-      const removeProudctId = productData._id
+        const cartData = await Cart.find({ userId: carId });
+        const productData = cartData[0].products
+        const removeProudctId = productData._id
 
-        const existingProduct = productData.find((product) =>  { 
+        const existingProduct = productData.find((product) => {
 
-          return  product._id.toString() === itemId
-           
+            return product._id.toString() === itemId
+
         });
-      const minusAmout = existingProduct.price;
-    
-         const Discount = cartData[0].cartTotal-minusAmout
-        
+        const minusAmout = existingProduct.price;
 
-      const updatetottal = await Cart.updateOne({userId:carId},{$set:{cartTotal:Discount,cartSubtotal:Discount}})
-        const PPdata = await Cart.findOne({userId:carId})
+        const Discount = cartData[0].cartTotal - minusAmout
+
+
+        const updatetottal = await Cart.updateOne({ userId: carId }, { $set: { cartTotal: Discount, cartSubtotal: Discount } })
+        const PPdata = await Cart.findOne({ userId: carId })
         const PData = PPdata.cartTotal
-       
-      const result = await Cart.findOneAndUpdate(
-        { 'products._id': itemId }, // Find the cart that contains the product with the specified '_id'
-        { $pull: { products: { _id: itemId } } }, // Remove the product from the 'products' array
-        { new: true } // Return the updated cart after the removal
-    );
-    
+
+        const result = await Cart.findOneAndUpdate(
+            { 'products._id': itemId }, // Find the cart that contains the product with the specified '_id'
+            { $pull: { products: { _id: itemId } } }, // Remove the product from the 'products' array
+            { new: true } // Return the updated cart after the removal
+        );
+
         if (result) {
             const success = true;
-            res.json({ PData, success,result });
+            res.json({ PData, success, result });
         } else {
             console.log('Cart item not found or product not removed.');
         }
@@ -1138,6 +1012,7 @@ const RemoveCart = async (req, res) => {
     }
     catch (error) {
         console.error("Error", error);
+        res.render('users/404', { user: req.session.user_id })
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
@@ -1160,7 +1035,7 @@ const listOrder = async (req, res) => {
         const user = await User.findById(userId);
 
         const perPage = 10; // Number of orders per page
-        const page = parseInt(req.query.page) || 1; 
+        const page = parseInt(req.query.page) || 1;
 
         const totalOrders = await Order.countDocuments({ userId: userId });
         const totalPages = Math.ceil(totalOrders / perPage);
@@ -1170,7 +1045,7 @@ const listOrder = async (req, res) => {
             .sort({ orderDate: -1 })
             .skip((page - 1) * perPage)
             .limit(perPage);
-       
+
         res.render('users/orderlist', {
             order,
             user,
@@ -1195,6 +1070,7 @@ const orderdetail = async (req, res) => {
         res.render('users/orderdetail', { order, user, products })
     } catch (error) {
         console.log(error.message)
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }
 
@@ -1202,12 +1078,24 @@ const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
         const orderData = await Order.findById({ _id: orderId });
-        const wltData = await Wallet.findOne({ user: req.session.user_id })
-        console.log("totall price iwant chge", orderData.totalprice);
-      
-        const tottaolBalance = wltData.balance + orderData.totalprice
-      
-        const WalletUpdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance: tottaolBalance } })
+
+        const wallet = await Wallet.findOne({ user: req.session.user_id });
+
+        if (wallet) {
+            const debitTransaction = {
+                Amount: orderData.totalprice,
+                transactionType: 'credit',
+            };
+
+
+            wallet.transactions.push(debitTransaction);
+            wallet.balance += debitTransaction.Amount; // Update the balance accordingly
+
+
+        }
+        await wallet.save()
+
+        // const WalletUpdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance:totalBalance } })
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
@@ -1230,6 +1118,56 @@ const cancelOrder = async (req, res) => {
 
 
         order.orderStatus = 'Cancelled';
+        await order.save();
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+const returnOrder = async (req, res) => {
+    try {
+
+        const { orderId, selectedReason } = req.body;
+        const orderData = await Order.findById({ _id: orderId });
+
+        const wallet = await Wallet.findOne({ user: req.session.user_id });
+
+        if (wallet) {
+            const debitTransaction = {
+                Amount: orderData.totalprice,
+                transactionType: 'credit',
+            };
+
+
+            wallet.transactions.push(debitTransaction);
+            wallet.balance += debitTransaction.Amount; // Update the balance accordingly
+
+            await wallet.save()
+        }
+
+
+        // const WalletUpdate = await Wallet.updateOne({ user: req.session.user_id }, { $set: { balance:totalBalance } })
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        if (order.orderStatus !== 'Delivered') {
+            return res.status(400).json({ error: 'NotDelivered' });
+        }
+
+        const currentDate = new Date();
+        const orderDate = order.orderDate;
+        const daysDifference = Math.floor((currentDate - orderDate) / (1000 * 60 * 60 * 24));
+
+        if (daysDifference > 10) {
+            return res.json({ error: 'Over10Days' });
+        }
+
+        order.orderStatus = 'Returned';
+        order.reasonResponse = selectedReason;
         await order.save();
 
         return res.json({ success: true });
@@ -1282,6 +1220,7 @@ const sendresetpasswordMail = async (name, email, token) => {
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -1307,6 +1246,7 @@ const Foregotverify = async (req, res) => {
     } catch (error) {
 
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 
@@ -1326,22 +1266,24 @@ const ForegotpasswordLoad = async (req, res) => {
     } catch (error) {
 
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const resetpassword = async (req, res) => {
     try {
         const password = req.body.password
-      
+
         const secure_password = await passwordHash(password)
         console.log(secure_password);
-       
-        const updateData =await User.findOneAndUpdate({ _id: req.body.user_id }, { $set: { password: secure_password, token: '' } })
-       
+
+        const updateData = await User.findOneAndUpdate({ _id: req.body.user_id }, { $set: { password: secure_password, token: '' } })
+
         res.redirect("/")
 
     }
     catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 }
 const Walletrecharge = async (req, res) => {
@@ -1374,8 +1316,44 @@ const Walletrecharge = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
     }
 };
+const walletHistory = async (req, res) => {
+    try {
+        const page = req.query.page || 1;
+        const itemsPerPage = 8;
+        const wallet = await Wallet.findOne({ user: req.session.user_id })
+
+        const totalTransactions = wallet ? wallet.transactions.length : 0;
+        const totalPages = Math.ceil(totalTransactions / itemsPerPage);
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        const sortedTransactions = wallet ? wallet.transactions.sort((a, b) => b.craetedAt - a.craetedAt) : [];
+        const transactions = wallet ? wallet.transactions.slice(startIndex, endIndex)
+            : [];
+
+        res.render("users/wallethistory", {
+            wallet, transactions, currentPage: page,
+            totalPages,
+        })
+    }
+    catch (error) {
+        console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
+    }
+}
+
+const errorpage = async (req, res) => {
+    try {
+        res.render("users/404")
+    }
+    catch (error) {
+        console.log(error.message);
+        res.render('users/404', { user: req.session.user_id })
+    }
+}
 module.exports = {
-    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge
+    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge, walletHistory, returnOrder, errorpage
 }
