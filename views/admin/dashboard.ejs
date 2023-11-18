@@ -1,6 +1,8 @@
 <%- include("../layouts/adminheader")%>
 
 
+
+      
     <section class="content-main">
         <div class="content-header">
             <div>
@@ -16,7 +18,12 @@
                                 class="text-primary material-icons md-monetization_on"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Revenue</h6>
-                            <span>₹<%= orders.totalPriceSum %></span>
+                            <% if(!orders){%>
+
+                                <span>₹0</span>
+                                <% }else{ %>
+                            <span>₹<%= orders?.totalPriceSum %></span>
+                            <%} %>
                             <!-- <span class="text-sm">
                         </span> -->
                         </div>
@@ -30,9 +37,21 @@
                                 class="text-success material-icons md-local_shipping"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Orders</h6>
-                            <span class="text-sm">
-                                in <%= categoryCount %> categories
-                            </span>
+                            
+                            <% if(!categoryCount){ %>
+
+                                <span class="text-sm">
+                                    in 0 categories
+                                </span>
+
+                                <% }else{ %>
+                                    <span class="text-sm">
+                                        in <%= categoryCount %> categories
+                                    </span>
+                            <% } %>
+
+
+                           
                         </div>
                     </article>
                 </div>
@@ -44,9 +63,15 @@
                                 class="text-warning material-icons md-qr_code"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Products</h6>
+                            <% if(!productsCount){ %>
+                                <span class="text-sm">
+                                   0
+                                </span>
+                                <% }else{ %>
                             <span class="text-sm">
                                 <%= productsCount %>
                             </span>
+                            <% } %>
                         </div>
                     </article>
                 </div>
@@ -58,9 +83,15 @@
                                 class="text-info material-icons md-shopping_basket"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Online Earning</h6>
+                            <%if(!onlinePay){ %>
+                                <span class="text-sm">
+                                    from 0 orders
+                                </span>
+                                <% }else { %>
                             <span class="text-sm">
                                 from <%= onlinePay.count %> orders
                             </span>
+                            <% } %>
                         </div>
                     </article>
                 </div>
@@ -123,6 +154,9 @@
                                     <th scope="col">Date</th>
                                 </tr>
                             </thead>
+                           <% if(!order){ %>
+                                <h1>NO data</h1>
+                            <% }else {%>
                             <% order.forEach((order)=>{ %>
                                 <tr>
                                     <td>
@@ -160,14 +194,17 @@
                                         <%= order.orderDate.toISOString().slice(0, 10) %>
                                     </td>
                                 </tr>
+                              
                                 <% }) %>
+
+                                <% } %>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
+  
 </div>
 </div>
 

@@ -1,5 +1,5 @@
 <%- include("../layouts/adminheader")%>
-        <section class="content-main">
+        <section class="content-main" id="my">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Categories </h2>
@@ -13,15 +13,19 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form action="/admin/addcategory"method="post" enctype="multipart/form-data"n id="categoryForm">
+                            <form action="" id="categoryForms">
+                               
+                            </form>
+                           
+                            <form action="/admin/addcategory" method="post" enctype="multipart/form-data" id="categoryForm">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Category Name</label>
-                                    <input type="text" name="categoryname" placeholder="Type here" class="form-control" id="category_name" required />
+                                    <input type="text" name="categoryname" placeholder="Type here" class="form-control" id="category_name"  />
                                     <p id="categoryNameError" class="error-message"></p>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label"  >Description</label>
-                                    <textarea placeholder="Type here" name="description" class="form-control" required></textarea>
+                                    <textarea placeholder="Type here" name="description" class="form-control" ></textarea>
                                     <p id="descriptionError" class="error-message"></p>
                                 </div>
                                 <div class="mb-4">
@@ -31,12 +35,12 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Image</label>
-                                    <input type="file" name="file" class="form-control" id="category_image" accept="image/*" required/>
+                                    <input type="file" name="file" class="form-control" id="category_image" accept="image/*" />
                                     <p style="color: red;" id="imageError" class="error-message"></p>
                                 </div>
                               
                                 <div class="d-grid">
-                                    <button class="btn btn-primary"type="submit">Create category</button>
+                                     <button class="btn btn-primary" type="submit">Create category</button>
                                 </div>
                               
                             </form>
@@ -102,11 +106,15 @@
             </div> <!-- card .// -->
         </section> <!-- content-main end// -->
   <script>
+    
+    
     document.getElementById("category_image").addEventListener("change" ,function(){
+       
         const fileInput = this;
         const errorElement = document.getElementById('imageError')
         errorElement.textContent = ""
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
+      
         if(fileInput.files.length >0){
             const selectFleType = fileInput.files[0].type;
             if(!allowedTypes.includes(selectFleType)){
@@ -115,8 +123,12 @@
             }
         }
     })
+
     document.getElementById("categoryForm").addEventListener("submit", function (event) {
+        
+      
     const errorElement = document.getElementById('imageError');
+    
     if (errorElement.textContent !== '') {
       // An error message is displayed, prevent form submission
       event.preventDefault();

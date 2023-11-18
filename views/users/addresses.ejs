@@ -1,42 +1,46 @@
 <%- include('../layouts/header') %>
-<div class="container">
-  <div class="row">
-    <% if(addresData){%>
-    <% addresData.addresses.forEach((address) => {  %>
-     
-    <div class="card ml-5" >
-      <div class="card-body">
+  <div class="container">
+    <div class="row">
+      <% if(addresData){%>
+        <% addresData.addresses.forEach((address)=> { %>
 
-        
-        
-        <h5 class="card-title">Name : <%= address.Name %></h5>
-        <p class="card-text">Number :<%= address.Number %></p>
-        <p class="card-text">Addres1 :<%= address.addressLine1 %></p>
-        <p class="card-text">Addres2 :<%= address.addressLine2 %></p>
-        <p class="card-text">Stae :<%= address.state %></p>
-        <p class="card-text">PinCode :<%= address.postalCode %></p>
-        <p class="card-text"> Country :<%= address.country %></p>
-        <% if(address.isDefault== true){ %>
-          <a href="/default?addressId=<%= address._id %>">
-            <button type="button" class="btn btn-success" id="default"> Default</button>
-          </a>
-       <% }else{ %>
-          <a href="/default?addressId=<%= address._id %>">
-            <button type="button" class="btn btn-primary" id="default">make to Default</button>
-          </a>
-       <% } %>
-               
-        <button type="button" class="btn btn-primary">Edit</button>
-        <button type="button" class="btn btn-primary">delete</button>
-      </div>
+          <div class="card ml-5">
+            <div class="card-body">
+              <h5 class="card-title">Name : <%= address.Name %>
+              </h5>
+              <p class="card-text">Number :<%= address.Number %>
+              </p>
+              <p class="card-text">Addres1 :<%= address.addressLine1 %>
+              </p>
+              <p class="card-text">Addres2 :<%= address.addressLine2 %>
+              </p>
+              <p class="card-text">Stae :<%= address.state %>
+              </p>
+              <p class="card-text">PinCode :<%= address.postalCode %>
+              </p>
+              <p class="card-text"> Country :<%= address.country %>
+              </p>
+              <% if(address.isDefault==true){ %>
+                <a href="/default?addressId=<%= address._id %>">
+                  <button type="button" class="btn btn-success" id="default"> Default</button>
+                </a>
+                <% }else{ %>
+                  <a href="/default?addressId=<%= address._id %>">
+                    <button type="button" class="btn btn-primary" id="default">make to Default</button>
+                  </a>
+                  <% } %>
+
+                    <button type="button" class="btn btn-primary">Edit</button>
+                    <button type="button" class="btn btn-primary">delete</button>
+            </div>
+          </div>
+          <% }) %>
+            <% }else{%>
+              <h1>No data</h1>
+              <% }%>
     </div>
-    <% }) %>
-    <% }else{%>
-      <h1>No data</h1>
-   <% }%>
   </div>
-</div>
-<script>
- 
-</script>
-<%- include('../layouts/footer') %>
+  <script>
+
+  </script>
+  <%- include('../layouts/footer') %>

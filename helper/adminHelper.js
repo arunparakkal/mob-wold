@@ -10,13 +10,15 @@ module.exports = {
             const email = req.body.email
             const password = req.body.password
             const userData =  await User.findOne({email:email})
-            
+            console.log("admindata",userData);
             if(userData){
                 const passwordMatch = await bcrypt.compare(password,userData.password)
+                console.log("passwordmatch",passwordMatch);
                 if(passwordMatch){
                      if(userData.is_admin == 0){
                         res.render("login",{message:"Admin not verified please verify the admin"})
                      }else{
+
                         req.session.user_id = userData._id
                         res.redirect('dashboard')
                      }

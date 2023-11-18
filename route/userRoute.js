@@ -87,6 +87,7 @@ userRoute.post('/forgot-password',UserController.resetpassword)
 userRoute.post("/walletrecharge",auth.isLogin,UserController.Walletrecharge)
 userRoute.get("/wallethistory",auth.isLogin,UserController.walletHistory)
 userRoute.get("/404-page",auth.isLogin,UserController.errorpage)
+userRoute.post("/search",auth.isLogin,UserController.search)
 
 
 

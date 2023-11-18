@@ -4,6 +4,7 @@ const product = require("../model/product");
 const Product = require('../model/product')
 const loadCategory = async (req, res) => {
     try {
+        
         await categoryHelper.loadcategory(req, res)
     }
     catch (error) {
@@ -11,7 +12,9 @@ const loadCategory = async (req, res) => {
     }
 }
 const addCategory = async (req, res) => {
+   
     try {
+        
         await categoryHelper.addcategory(req, res)
     }
     catch (error) {
@@ -30,7 +33,7 @@ const editCategory = async (req, res) => {
 }
 const updateCategory = async (req, res) => {
     try {
-
+console.log("editedd");
         const { categoryname, description } = req.body
 
         const userId = req.body.userId;
@@ -56,7 +59,7 @@ const List = async (req, res) => {
         const categoryName = categoryData.categoryname;
         const productData = await Product.find({ categoryname: categoryName });
         const updatproisList = await Product.updateMany({ categoryname: categoryName }, { $set: { isListed: true } });
-        console.log('kkkkkk', updatproisList);
+    
         res.redirect("/admin/category");
     } catch (error) {
         console.log(error.message);

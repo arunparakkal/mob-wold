@@ -31,15 +31,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
-                                <% if (cart && cart.products.length > 0) { %>
-                                    <% cart.products.forEach((product) => { %>
+
+                                <% if (cart && cart.products.length> 0) { %>
+                                    <% cart.products.forEach((product)=> { %>
                                         <tr class="tableContainer" data-id="<%= product._id %>">
                                             <td class="cart__product__item" style="width: 150px; height: 15;">
-                                                <img  src="/uploadProduct/<%= product.productId.image[0] %>"
+                                                <img src="/uploadProduct/<%= product.productId.image[0] %>"
                                                     alt="<%= product.productId.productname %>">
                                                 <div class="cart__product__item__title">
-                                                    <h6><%= product.productId.productname %></h6>
+                                                    <h6>
+                                                        <%= product.productId.productname %>
+                                                    </h6>
                                                 </div>
                                             </td>
                                             <td class="cart__quantity">
@@ -47,70 +49,66 @@
                                                     <span class="dec qtybtn decreaseBtn"
                                                         data-productId="<%= product.productId._id %>">-</span>
                                                     <input type="text" value="<%= product.quantity %>" class="qtyInput">
-                                                    <input type="hidden" class="productId" value="<%= product.productId._id %>">
+                                                    <input type="hidden" class="productId"
+                                                        value="<%= product.productId._id %>">
                                                     <span class="inc qtybtn increaseBtn">+</span>
                                                 </div>
                                             </td>
-                                            <td class="cart__total">&#8377;<%= product.price %></td>
-                                            <td class="cart__total productSubtotal">&#8377;<%= product.subTotal %></td>
-                                            <td class="cart__close" style="text-align: left;"><span class="icon_close"></span></td>
+                                            <td class="cart__total">&#8377;<%= product.price %>
+                                            </td>
+                                            <td class="cart__total productSubtotal">&#8377;<%= product.subTotal %>
+                                            </td>
+                                            <td class="cart__close" style="text-align: left;"><span
+                                                    class="icon_close"></span></td>
                                         </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="5"><h3>Cart is empty</h3></td>
-                                    </tr>
-                                <% } %>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <h3>Cart is empty</h3>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
                             </tbody>
-    
+
                         </table>
-                        
+
                     </div>
                 </div>
             </div>
             <div class="row">
-                <!-- <div class="col-lg-6 col-md-6 col-sm-6">
-              <div class="cart__btn">
-                  <a href="#">Continue Shopping</a>
-              </div>
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-6">
-              <div class="cart__btn update__btn">
-                  <a href="#"><span class="icon_loading"></span> Update cart</a>
-              </div>
-          </div> -->
+
             </div>
             <div class="row">
                 <div class="col-lg-6">
-                    <!-- <div class="discount__content">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Enter your coupon code">
-                            <button type="submit" class="site-btn">Apply</button>
-                        </form>
-                    </div> -->
+
                 </div>
                 <div class="col-lg-4 offset-lg-2">
-                    <% if (cart && cart.products.length > 0) { %>
-                        <% cart.products.forEach((product) => { %>
+                    <% if (cart && cart.products.length> 0) { %>
+                        <% cart.products.forEach((product)=> { %>
                             <div class="cart__product__item">
                                 <!-- Display individual product details here -->
                             </div>
-                        <% }); %>
-                        <div class="cart__total__procced">
-                            <h6>Cart total</h6>
-                            <ul>
-                                <li>Subtotal
-                                     
-                                    <span id="subTotal" class="cartSubtotal"><%= cart.cartSubtotal %></span><span>&#8377;</span></li>
-                                <li>Total <span id="cartTotal" class="cartTotal"><%= cart.cartTotal %></span><span>&#8377;</span></li>
-                            </ul>
-                            <a href="checkout" class="primary-btn">Proceed to checkout</a>
-                        </div>
-                    <% } %>
+                            <% }); %>
+                                <div class="cart__total__procced">
+                                    <h6>Cart total</h6>
+                                    <ul>
+                                        <li>Subtotal
+
+                                            <span id="subTotal" class="cartSubtotal">
+                                                <%= cart.cartSubtotal %>
+                                            </span><span>&#8377;</span>
+                                        </li>
+                                        <li>Total <span id="cartTotal" class="cartTotal">
+                                                <%= cart.cartTotal %>
+                                            </span><span>&#8377;</span></li>
+                                    </ul>
+                                    <a href="checkout" class="primary-btn">Proceed to checkout</a>
+                                </div>
+                                <% } %>
                 </div>
             </div>
-            
+
         </div>
     </section>
     <!-- Shop Cart Section End -->
@@ -134,17 +132,17 @@
                         })
                             .then((response) => response.json())
                             .then((data) => {
-                               
-                                if (data.success) {
-                                    
-                                    cartItem.remove()
-                                    const subTotal = document.getElementById('subTotal').textContent=data?.result?.cartSubtotal
-                                    const Total = document.getElementById('cartTotal').textContent=data?.result?.cartTotal
-                                    
 
-                                   
+                                if (data.success) {
+
+                                    cartItem.remove()
+                                    const subTotal = document.getElementById('subTotal').textContent = data?.result?.cartSubtotal
+                                    const Total = document.getElementById('cartTotal').textContent = data?.result?.cartTotal
+
+
+
                                 }
-                            
+
                             })
                             .catch((error) => {
                                 console.log("erropage");

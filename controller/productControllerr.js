@@ -22,8 +22,9 @@ const createProducts = async (req, res) => {
 
         const categories = await Category.findOne({ categoryname: categoryname }).lean()
 
-
+      
         const productprice = Productprice
+
         let specialOffer = 0;
         if (categories.offer < Salesprice) {
 
@@ -38,7 +39,7 @@ const createProducts = async (req, res) => {
         const discount = (Productprice * specialOffer) / 100
         const salesprice = Productprice - discount
     
-        console.log(productprice);
+        
 
         await cropImage.crop(req);
         const images = req.files.map(file => file.filename);
@@ -55,7 +56,7 @@ const createProducts = async (req, res) => {
 
         });
         const saveProduct = await productadd.save();
-        console.log("product added successfully");
+      
 
         const products = await Product.find()
 

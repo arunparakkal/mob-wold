@@ -1,95 +1,92 @@
-<%- include("../layouts/header")%>  
-<link rel="stylesheet" type="text/css" href="/public/css/btn.css">
-<!-- Breadcrumb Begin -->
-<div class="breadcrumb-option">
-  <div class="container">
-      <div class="row">
-          <div class="col-lg-12">
-              <div class="breadcrumb__links">
-                  <a href="./index.html"><i class="fa fa-home"></i> Home</a>
-                  <span>Shopping cart</span>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
-<!-- Breadcrumb End -->
-
-<!-- Checkout Section Begin -->
-<section class="checkout spad">
-  <div class="container">
-      
-
-      <form method="post" action="address"  class="checkout__form">
-        <input type="hidden" name="add" value="<%= sec %>">
-        
-          <div class="row">
-            
-              <div class="col-lg-8">
-                <div class="col-lg-8">
-                
-
-            </div>
-
+<%- include("../layouts/header")%>
+    <link rel="stylesheet" type="text/css" href="/public/css/btn.css">
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
             <div class="row">
-                <div class="col-lg-4">
-                    <h5>add new Address</h5>
-              
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
             </div>
-            
-            
-                
-                  <div class="row">
-                   
-                      
-                      <div class="col-lg-6 col-md-6 col-sm-6">
-                          <div class="checkout__form__input">
-                              <p> Name <span>*</span></p>
-                              <input  name="name" type="text">
-                          </div>
-                      </div>
-                      <div class="col-lg-12">
-                          <div class="checkout__form__input">
-                              <p>Phone <span>*</span></p>
-                              <input  name="mobile" type="number">
-                          </div>
-                          <div class="checkout__form__input" >
-                              <p>Address 1<span>*</span></p>
-                              <input type="text" name="address1" placeholder=" street Apartment. suite, unite ect ( optinal )">
-                          </div>
-                          <div class="checkout__form__input">
-                            <p>Address 2<span>*</span></p>
-                            
-                            <input type="text"  name="address2" placeholder=" street Apartment. suite, unite ect ( optinal )">
-                        </div>
-                          <div class="checkout__form__input" >
-                              <p>State <span>*</span></p>
-                              <input name="state" type="text">
-                          </div>
-                          <div class="checkout__form__input" >
-                              <p>Pincode <span>*</span></p>
-                              <input   name="postalCode" type="number">
-                          </div>
-                      </div>
-                     
-                      <div class="col-lg-6 col-md-6 col-sm-6">
-                          <div class="checkout__form__input">
-                              <p>Contry <span>*</span></p>
-                              <input  name="country" type="text">
-                          </div>
-                      </div>
-                      <button type="submit" class="btn btn-primary w-100"> add </button>
-                      </div>
-                   
-                  </div>
-            
-              </div>
-        
-      </div>
-  </section>
-  <!-- Checkout Section End -->
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
 
- <script>
-    
- </script>
-<%- include("../layouts/footer")%>  
+    <!-- Checkout Section Begin -->
+    <section class="checkout spad">
+        <div class="container">
+
+            <form method="post" action="address" class="checkout__form">
+                <input type="hidden" name="add" value="<%= sec %>">
+
+                <div class="row">
+
+                    <div class="col-lg-8">
+                        <div class="col-lg-8">
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h5>add new Address</h5>
+
+                            </div>
+                            <div class="row">
+
+
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="checkout__form__input">
+                                        <p> Name <span>*</span></p>
+                                        <input name="name" type="text">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="checkout__form__input">
+                                        <p>Phone <span>*</span></p>
+                                        <input name="mobile" type="number">
+                                    </div>
+                                    <div class="checkout__form__input">
+                                        <p>Address 1<span>*</span></p>
+                                        <input type="text" name="address1"
+                                            placeholder=" street Apartment. suite, unite ect ( optinal )">
+                                    </div>
+                                    <div class="checkout__form__input">
+                                        <p>Address 2<span>*</span></p>
+
+                                        <input type="text" name="address2"
+                                            placeholder=" street Apartment. suite, unite ect ( optinal )">
+                                    </div>
+                                    <div class="checkout__form__input">
+                                        <p>State <span>*</span></p>
+                                        <input name="state" type="text">
+                                    </div>
+                                    <div class="checkout__form__input">
+                                        <p>Pincode <span>*</span></p>
+                                        <input name="postalCode" type="number">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="checkout__form__input">
+                                        <p>Contry <span>*</span></p>
+                                        <input name="country" type="text">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100"> add </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+    </section>
+    <!-- Checkout Section End -->
+
+    <script>
+
+    </script>
+    <%- include("../layouts/footer")%>

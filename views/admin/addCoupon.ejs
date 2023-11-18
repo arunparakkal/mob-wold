@@ -1,12 +1,12 @@
 <%- include("../layouts/adminheader")%>
-  
+
 
     <section class="content-main">
         <div class="row">
             <div class="col-9">
                 <div class="content-header">
                     <form action="/admin/addCoupon" method="post" id="couponForm">
-                        <h2 class="content-title">Add Coupon</h2>       `
+                        <h2 class="content-title">Add Coupon</h2> `
 
                 </div>
             </div>
@@ -72,7 +72,8 @@
                     </div>
                 </div> <!-- card end// -->
                 <div>
-                    <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="submitForm()">Publish</button>
+                    <button class="btn btn-md rounded font-sm hover-up" type="button"
+                        onclick="submitForm()">Publish</button>
                 </div>
             </div>
         </div>
@@ -81,12 +82,14 @@
         </div>
     </section> <!-- content-main end// -->
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-     function submitForm() {
-       
-       event.preventDefault();
-       let formData = $("#couponForm").serialize();
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function submitForm() {
+
+            event.preventDefault();
+            event.preventDefault();
 
             // Get form input values
             let couponCode = $("#couponCode").val().trim();
@@ -94,8 +97,9 @@
             let discount = $("#discount").val().trim();
             let maxDiscount = $("#maxDiscount").val().trim();
             let minAmount = $("#minAmount").val().trim();
-            let expirationDate = new Date($("#expirationDate").val().trim());;
+            let expirationDate = $("#expirationDate").val().trim(); // no need to create a Date object
 
+            // Validation and other code...
             // Validation
             var isValid = true;
 
@@ -163,22 +167,32 @@
             } else {
                 $("#expirationDateError").text("");
             }
-
-            // If all fields are valid, submit the form
+            // If all fields are valid, prepare the form data
             if (isValid) {
+                let formData = {
+                    couponCode: couponCode,
+                    description: description,
+                    discount: discount,
+                    maxDiscount: maxDiscount,
+                    minAmount: minAmount,
+                    expirationDate: expirationDate
+                };
+             
                 $.ajax({
                     type: "POST",
                     url: "/admin/addCoupon",
-                    data: formData,
+                    contentType: "application/json", // Set content type to JSON
+                    data: JSON.stringify(formData),
                     success: function (response) {
-
-                        window.location.href = '/admin/coupons'
+                        window.location.href = '/admin/coupons';
                     },
                     error: function (error) {
                         console.error("Error submitting the form", error);
                     }
-                })
+                });
+            } else {
+                console.log("Form data is not valid.");
             }
         }
-</script>
-   <%- include("../layouts/adminfooter")%>
+    </script>
+    <%- include("../layouts/adminfooter")%>

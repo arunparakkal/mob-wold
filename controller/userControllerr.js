@@ -279,6 +279,7 @@ const loadShop = async (req, res) => {
         let totalPages;
 
         const selectedCategory = req.query.categoryname || 'all';
+        console.log("selected category 2.0",selectedCategory);
 
         const categories = await Category.aggregate([
             {
@@ -303,7 +304,7 @@ const loadShop = async (req, res) => {
                 $match: { hasListedProducts: true },
             },
         ]);
-
+       
         if (selectedCategory !== 'all') {
             const category = await Category.findOne({ categoryname: selectedCategory });
 
@@ -744,7 +745,7 @@ const placeOrder = async (req, res) => {
                 paymentmethod: paymentMethod,
             });
             await newOrder.save();
-            res.json({ method: 'code' });
+            res.json({ method: 'cod' });
             cart.products = [];
             await cart.save();
 
@@ -767,19 +768,21 @@ const placeOrder = async (req, res) => {
                 totalprice: calculateTotalPrice,
                 paymentmethod: paymentMethod,
             });
-            const savedOrder = await newOrder.save();
-            cart.products = [];
-            await cart.save();
-            console.log('saved', savedOrder);
+            req.session.newOrder = newOrder;
+            const savedOrder = req.session.newOrder      
+          
             const generateOrder = await generateOrderRazorpay(
                 savedOrder._id,
-                cart.cartTotal
+                cart.cartTotal,
+                
             );
+            cart.products = []
+            await cart.save()
             res.json({ generateOrder, method: 'online' });
         } else if (paymentMethod === 'wallet') {
             if (walletData.balance < cart.cartTotal) {
 
-                return res.json({ nowallet: false, error: "Wallet have no enough balance" })
+                return res.json({ method:"wallet", nowallet: false, error: "Wallet have no enough balance" })
             } else {
 
                 // const walletData = await Wallet.findOne({ user: req.session.user_id })
@@ -826,8 +829,8 @@ const placeOrder = async (req, res) => {
 
                 cart.products = [];
                 await cart.save();
-
-                res.status(200).json(newOrder);
+                
+                res.status(200).json({newOrder,method:"wallet"});
 
             }
 
@@ -896,8 +899,13 @@ const verifyRazorpayPayment = async (req, res) => {
         const { razorpayOrderId, razorpayPaymentId, secret } = req.body;
         verifyOrderPayment(req.body)
             .then(async () => {
-                console.log("Payment SUCCESSFUL");
+                const orders = req.session.newOrder
+                const saveOrder = new Order(orders)
 
+                await saveOrder.save()
+                
+                const cart = req.body.cart
+              
                 res.json({ status: true });
 
             }).catch((err) => {
@@ -920,27 +928,22 @@ const cartQuantity = async (req, res) => {
         const cart = await Cart.findOne({ userId })
         if (!cart) {
             return res.json({ message: 'cart not found' })
-        }
-        console.log(productId);
-
+        }      
         const cartProduct = cart.products.find((product) => {
             return product.productId._id.toString() === productId
         })
-
-
         const products = await product.findById({ _id: productId })
         console.log(products.quantity);
         const stockAnalize = cartProduct.quantity - quantity
 
-        if (stockAnalize < 0) {
-            console.log("decrease");
+        if (stockAnalize < 0) {           
             products.quantity -= 1
         } else if (stockAnalize > 0) {
-            console.log("increase");
+        
             products.quantity += 1
         }
         await products.save()
-        console.log('huhjh', products.quantity);
+     
         if (!cartProduct) {
             return res.json({ message: 'product not found' })
         }
@@ -960,9 +963,6 @@ const cartQuantity = async (req, res) => {
         cart.cartSubtotal = total;
         cart.cartTotal = total
         const updatedCart = await cart.save()
-
-
-
         res.json(updatedCart)
 
     } catch (error) {
@@ -1028,6 +1028,7 @@ const placedOrder = async (req, res) => {
         res.status(404).json({ error: "payment failed" })
     }
 }
+
 const listOrder = async (req, res) => {
     try {
         const products = await product.find();
@@ -1354,6 +1355,87 @@ const errorpage = async (req, res) => {
         res.render('users/404', { user: req.session.user_id })
     }
 }
+const search = async(req,res)=>{
+    try{
+      const serachQuery = req.body.search
+      const queryCondition = {
+        categoryname:{$regex:new RegExp(serachQuery,"i")}
+      }
+      console.log("queryCondition",queryCondition);
+      await renderProductsPage(req, res, queryCondition);
+
+     
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+const renderProductsPage = async (req, res, queryConditions) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const itemsPerPage = 4;
+
+        const categories = await Category.aggregate([
+            {
+                $match: { active: true },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'categoryname',
+                    foreignField: 'categoryname',
+                    as: 'products',
+                },
+            },
+            {
+                $addFields: {
+                    hasListedProducts: {
+                        $gt: [{ $size: '$products' }, 0],
+                    },
+                },
+            },
+            {
+                $match: { hasListedProducts: true },
+            },
+        ]);
+
+        const categoryname = req.query.categoryname || 'all';
+
+        let totalProductsCount;
+        let products;
+
+        if (categoryname !== 'all') {
+            const selectedCategory = categories.find((cat) => cat.categoryname === categoryname);
+            console.log("kdkdjd");
+            if (!selectedCategory) {
+            
+                return res.render('users/products', { categories, products: [], categoryname });
+            }
+
+            queryConditions.categoryname = selectedCategory.categoryname;
+        }
+        totalProductsCount = await product.countDocuments(queryConditions);
+  
+        products = await product.find(queryConditions)
+            .sort({ date: -1 })
+            .skip((page - 1) * itemsPerPage)
+            .limit(itemsPerPage)
+            .lean();
+
+        const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+
+        return res.render('users/shop', {
+            categories,
+            products,
+            categoryname,
+            currentPage: page,
+            totalPages: totalPages,
+            user:req.session.user_id
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 module.exports = {
-    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge, walletHistory, returnOrder, errorpage
+    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge, walletHistory, returnOrder, errorpage,search,
 }

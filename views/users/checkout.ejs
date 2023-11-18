@@ -19,25 +19,13 @@
     <section class="checkout spad">
         <div class="container">
             <div class="row">
-                <!-- <div class="col-lg-12">
-                    <h6 class="coupon__link"><span class="icon_tag_alt"></span> <a href="#">Have a coupon?</a> Click
-                        here to enter your code.</h6>
-                </div> -->
-
             </div>
-
             <form method="" action="" class="checkout__form">
-
                 <input type="hidden" id="cart-data" value='<%= JSON.stringify(cart) %>'>
-
                 <div class="row">
-
                     <div class="col-lg-8">
                         <div class="col-lg-8">
-
-
                         </div>
-
                         <div class="row">
                             <div class="col-lg-4">
                                 <h5>Billing detail</h5>
@@ -53,12 +41,7 @@
                                     Address</a>
                             </div>
                         </div>
-
-
-
                         <div class="row">
-
-
                             <% if(typeof defaultAddress !=='undefined' ){ %>
 
                                 <div class="col-lg-6 col-md-6 col-sm-6">
@@ -108,12 +91,8 @@
                                     </div>
                                     <% } %>
                         </div>
-
                     </div>
-
-
                     <div class="col-lg-4">
-
                         <div class="checkout__order">
                             <h5>Your order</h5>
                             <div class="checkout__order__product">
@@ -158,8 +137,6 @@
                             <% cart.products.forEach(cartItem=> { %>
                                 <div class="checkout__order__total">
                                     <ul>
-
-
                                         <li>Subtotal <span>&#8377; <%= cart.cartSubtotal.toFixed(2) %></span></li>
                                         <% if(coupon) {%>
                                             <li>Total <span>&#8377; <%= calculateTotalPrice %></span></li>
@@ -173,12 +150,6 @@
 
                                     <div class="payment-method">
                                         <h4>Payment Method</h4>
-                                        <!-- <div class="form-group form-check">
-                                    <input form="paymentForm" type="radio" name="paymentMethod" id="f-option4"
-                                        value="wallet">
-                                    <label class="form-check-label" form="paymentForm" for="payWithWallet">Wallet
-                                        Only</label>
-                                </div> -->
                                         <div class="form-group form-check">
                                             <input form="paymentForm" type="radio" name="paymentmethod" id="f-option5"
                                                 value="cod">
@@ -227,7 +198,7 @@
                 if (!selectedPaymentMethod) {
                     displayPaymentMethodError(); // Call the function to display the error message
                 } else {
-                    console.log("yoo bb", selectedPaymentMethod);
+                    console.log("payment method", selectedPaymentMethod);
                     const address = {
                         name: $("input[name='name']").val(),
                         mobile: $("input[name='mobile']").val(),
@@ -251,45 +222,40 @@
                         data: JSON.stringify(formData),
                         contentType: "application/json",
                         success: function (response) {
-                            console.log("nodwallet",response.nowallet);
-                            if (!response.nowallet) {
-                                console.log("entring my");
-                                displayInsufficientBalanceError(response.error);
-                            }
-
 
                             if (response.success === false) {
 
                                 displayCartEmptyError(response.message);
 
-                            } else if (response.paymentmethod === "wallet") {
+                            } else if (response.method === "wallet") {
+
+                                if (response.nowallet === false) {
 
 
+                                    displayInsufficientBalanceError(response.error);
+
+                                } else {
 
 
-                                Swal.fire({
-                                    title: "Order Success",
-                                    text: `Your order has been placed successfully! Your wallet balance is Rs:₹${response.walletBalance} `,
-                                    icon: "success",
-                                    showCancelButton: true,
-                                    confirmButtonText: "View Orders",
-                                    cancelButtonText: "Continue Shopping",
-                                    reverseButtons: true
-                                }).then(function (result) {
-                                    if (result.value) {
-                                        window.location.href = '/orderlist'; // Redirect to order list
-                                    } else if (result.dismiss === "cancel") {
-                                        window.location.href = "/shop"; // Redirect to shopping page
-                                    }
-                                });
+                                    Swal.fire({
+                                        title: "Order Success",
+                                        text: `Your order has been placed successfully! Your wallet balance is Rs:₹${response.newOrder.walletBalance} `,
+                                        icon: "success",
+                                        showCancelButton: true,
+                                        confirmButtonText: "View Orders",
+                                        cancelButtonText: "Continue Shopping",
+                                        reverseButtons: true
+                                    }).then(function (result) {
+                                        if (result.value) {
+                                            window.location.href = '/orderlist'; // Redirect to order list
+                                        } else if (result.dismiss === "cancel") {
+                                            window.location.href = "/shop"; // Redirect to shopping page
+                                        }
+                                    });
+                                }
                             }
-
-
-
                             else if (selectedPaymentMethod === 'cod') {
                                 // Handle Cash on Delivery (COD) payment
-
-
                                 Swal.fire({
                                     title: "Order Success",
                                     text: "Your order has been placed successfully!",
@@ -307,18 +273,39 @@
                                 });
                             } else if (selectedPaymentMethod === 'online') {
                                 console.log('generaterOrder', response.generateOrder)
+                                // Existing Razorpay options
                                 const options = {
-                                    "key": "rzp_test_YlNy1JDmG6jBsS", // Enter the Key ID generated from the Dashboard
-                                    "amount": response.generateOrder.amount_due, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                                    "key": "rzp_test_YlNy1JDmG6jBsS",
+                                    "amount": response.generateOrder.amount_due,
                                     "currency": "INR",
-                                    "name": "Future Furniture", //your business name
+                                    "name": "futre Mobiles",
                                     "description": "Test Transaction",
                                     "image": "https://example.com/your_logo",
-                                    "order_id": response.generateOrder.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
-                                    "handler": function (status) {
-
-
-                                        verifyPayment(response, status)
+                                    "order_id": response.generateOrder.id,
+                                    "handler": function (response) {
+                                        if (response.razorpay_payment_id) {
+                                            Swal.fire({
+                                                title: "Payment Success",
+                                                text: "Your payment has been successful!",
+                                                icon: "success",
+                                                showCancelButton: true,
+                                                confirmButtonText: "View Orders",
+                                                cancelButtonText: "Continue Shopping",
+                                                reverseButtons: true
+                                            }).then(function (result) {
+                                                if (result.value) {
+                                                    window.location.href = '/orderlist';
+                                                } else if (result.dismiss === "cancel") {
+                                                    window.location.href = "/shop";
+                                                }
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Payment Failed',
+                                                text: 'Payment failed! '
+                                            });
+                                        }
                                     },
                                     "prefill": {
                                         "name": "Gaurav Kumar",
@@ -336,6 +323,7 @@
                                 var rzp1 = new Razorpay(options);
                                 rzp1.open();
 
+
                             }
 
                             else {
@@ -344,6 +332,7 @@
 
                         },
                         error: function (error) {
+
                             console.error("Error:", error);
                         }
                     });
@@ -352,6 +341,7 @@
 
         });
         function displayPaymentMethodError() {
+
             Swal.fire({
                 title: "Error",
                 text: "Please choose the payment method",
@@ -360,6 +350,8 @@
         }
 
         function verifyPayment(order, payment) {
+            console.log("payment", payment);
+
 
             $.ajax({
                 url: '/verifyPayment',
@@ -412,7 +404,4 @@
             });
         }
     </script>
-
-
-
     <%- include("../layouts/footer")%>

@@ -7,6 +7,7 @@
 
 const loadLogin = async(req,res)=>{
     try{
+     
         res.render("login")
     }
     catch(error){
@@ -182,7 +183,7 @@ async function calculateDeliveredOrderTotal() {
           count: 0,
         };
       }
-  
+
       return totalData;
     } catch (error) {
       throw error;
@@ -438,7 +439,7 @@ async function calculateDeliveredOrderTotal() {
   
   const loaddashboard = async (req, res) => {
     try {
-     const ordersData = await calculateDeliveredOrderTotal()
+      const ordersData = await calculateDeliveredOrderTotal()
       console.log(ordersData,"get dashBorde rsData")
       const orders = ordersData[0]
       console.log(orders,"get dashBordorders")
@@ -466,8 +467,8 @@ async function calculateDeliveredOrderTotal() {
          console.log(latestorders,"get dashBord latestorders")
          console.log("productsCount:", productsCount);
          console.log("categoryCount:", categoryCount);
-        console.log("onlinePay.totalPriceSum:", onlinePay[0].totalPriceSum);
-        console.log("onlinePay.count:", onlinePay[0].count);
+        console.log("onlinePay.totalPriceSum:", onlinePay[0]?.totalPriceSum);
+        console.log("onlinePay.count:", onlinePay[0]?.count);
       console.log('uasername', latestorders)
   
       res.render('dashboard', {
