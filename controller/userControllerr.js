@@ -451,6 +451,11 @@ const insertData = async (req, res) => {
 
         const { name, mobile, address1, address2, state, postalCode, country } = req.body
         const userAddress = await Address.findOne({ userId: req.session.user_id })
+        let isDefault = false
+        if( !userAddress ||userAddress?.addresses?.length < 1){
+            isDefault=true
+        }
+
         const address = {
 
             Name: name,
@@ -459,9 +464,12 @@ const insertData = async (req, res) => {
             addressLine2: address2,
             state: state,
             postalCode: postalCode,
+            isDefault,
             country: country
 
         }
+
+        console.log('checking address',address);
 
         if (!userAddress || (userAddress && userAddress.addresses.length < 1)) {
             const newAddress = new Address({
@@ -797,6 +805,8 @@ const placeOrder = async (req, res) => {
             );
             cart.products = []
             await cart.save()
+            await newOrder.save()
+      
             res.json({ generateOrder, method: 'online' });
         } else if (paymentMethod === 'wallet') {
             if (walletData.balance < cart.cartTotal) {
@@ -844,7 +854,7 @@ const placeOrder = async (req, res) => {
                 });
                 await wallet.save();
                 await newOrder.save();
-
+                console.log('newOrder ',newOrder);
 
                 cart.products = [];
                 await cart.save();
@@ -1059,13 +1069,14 @@ const listOrder = async (req, res) => {
 
         const totalOrders = await Order.countDocuments({ userId: userId });
         const totalPages = Math.ceil(totalOrders / perPage);
-
-        const order = await Order.find({ userId: userId })
-            .populate('products.productId')
-            .sort({ orderDate: -1 })
-            .skip((page - 1) * perPage)
-            .limit(perPage);
-
+console.log('usee',userId);
+        const order = await Order.find({ userId })
+        .populate('products.productId')
+        .sort({ orderDate: -1 })
+        .skip((page - 1) * perPage)
+        .limit(perPage);
+            
+console.log('orders',order);
         res.render('users/orderlist', {
             order,
             user,
