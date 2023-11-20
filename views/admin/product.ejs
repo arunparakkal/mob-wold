@@ -133,157 +133,178 @@
                 </div>
             </div>
         </footer>
-    </main>
+    </main> 
     <script>
-          document.getElementById("product_image").addEventListener("change" ,function(v){
-        const fileInput = this;
-        const errorElement = document.getElementById('imageError')
-        errorElement.textContent = ""
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
-        if(fileInput.files.length >0){
-            const selectFleType = fileInput.files[0].type;
-            if(!allowedTypes.includes(selectFleType)){
-                errorElement.textContent = "Invalid file type,Add Images"              
+        document.getElementById("product_image").addEventListener("change", function (v) {
+            const fileInput = this;
+            const errorElement = document.getElementById('imageError');
+            errorElement.textContent = "";
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (fileInput.files.length > 0) {
+                const selectedFileType = fileInput.files[0].type;
+                if (!allowedTypes.includes(selectedFileType)) {
+                    errorElement.textContent = "Invalid file type, Add Images";
+                }
+            } else {
+                v.preventDefault();
             }
-        }else{
-            v.preventDefault()
-        }
-    })
-    document.getElementById("product-form").addEventListener("submit", function (event) {
-    const errorElement = document.getElementById('imageError');
-    if (errorElement.textContent !== '') {
-      // An error message is displayed, prevent form submission
-      event.preventDefault();
-    }
-  });
-    const form = document.getElementById('product-form');
-    const productNameInput = document.getElementById('product_name');
-    const descriptionInput = document.querySelector('textarea[name="description"]');
-    const productPriceInput = document.querySelector('input[name="productprice"]');
-    const salesPriceInput = document.querySelector('input[name="salesprice"]');
-    const quantityInput = document.querySelector('input[name="quantity"]');
-    const colorInput = document.querySelector('input[name="color"]');
-    const imageInput = document.querySelector('input[name="file"]');
-    const categoryInput = document.querySelector('select[name="categoryname"]');
-
-    // Function to validate the product name
-    function validateProductName() {
-        const productName = productNameInput.value.trim();
-        if (productName === '') {
-            document.getElementById('productnameError').textContent = 'Product name is required.';
-            return false;
-        }
-        return true;
-    }
-
-    // Function to validate the description
-    function validateDescription() {
-        const description = descriptionInput.value.trim();
-        if (description === '') {
-            document.getElementById('descriptionError').textContent = 'Description is required.';
-            return false;
-        }
-        return true;
-    }
-
-
-function validateProductPrice() {
-    const productPrice = productPriceInput.value.trim();
-    if (productPrice === '') {
-        document.getElementById('regularPriceError').textContent = 'Regular price is required.';
-        return false;
-    }
-    if (isNaN(productPrice) || parseFloat(productPrice) < 0) {
-        document.getElementById('regularPriceError').textContent = 'Regular price must be a non-negative number.';
-        return false;
-    }
+        });
     
-    return true;
-}
-
+        const form = document.getElementById('product-form');
+        const productNameInput = document.querySelector('input[name="productname"]');
+        const descriptionInput = document.querySelector('textarea[name="description"]');
+        const regularPriceInput = document.querySelector('input[name="Productprice"]');
+        const offerInput = document.querySelector('input[name="Salesprice"]');
+        const quantityInput = document.querySelector('input[name="quantity"]');
+        const colorInput = document.querySelector('input[name="color"]');
+        const imageInput = document.querySelector('input[name="file"]');
+        const categoryInput = document.querySelector('select[name="categoryname"]');
     
-    function validateSalesPrice() {
-    const salesPrice = salesPriceInput.value.trim();
-   
-    if (salesPrice === '') {
-        document.getElementById('promotionalPriceError').textContent = 'promotional price is required.';
-        return false;
-    }
-
-    if (salesPrice !== '' && parseFloat(salesPrice) < 0) {
-        document.getElementById('promotionalPriceError').textContent = 'Promotional price must be a non-negative number.';
-        return false;
-    }
-    if (salesPrice < 100) {
-        document.getElementById('promotionalPriceError').textContent = 'plaease enter offer around 100%';
-        return false;
-    }
-    return true;
-}
-
-    function validateQuantity() {
-        const quantity = quantityInput.value.trim();
-        if (quantity === '') {
-            document.getElementById('quantityError').textContent = 'Quantity is required.';
-            return false;
+        function validateProductName() {
+            const productName = productNameInput.value.trim();
+            const errorElement = document.getElementById('productnameError');
+            errorElement.textContent = "";
+    
+            if (productName === '' || /^\s*$/.test(productName)) {
+                errorElement.textContent = 'Product name is required.';
+                return false;
+            }
+    
+            return true;
         }
-        return true;
-    }
-    function validateColor() {
-        const color = colorInput.value.trim();
-        if (color === '') {
-            document.getElementById('colorError').textContent = 'Color is required.';
-            return false;
+    
+        function validateDescription() {
+            const description = descriptionInput.value.trim();
+            const errorElement = document.getElementById('descriptionError');
+            errorElement.textContent = "";
+    
+            if (description === '' || /^\s*$/.test(description)) {
+                errorElement.textContent = 'Description is required.';
+                return false;
+            }
+    
+            return true;
         }
-        return true;
-    }
-
-    function validateImage() {
-        const files = imageInput.files;
-        if (files.length === 0) {
-            document.getElementById('imageError').textContent = 'Image is required.';
-            return false;
+    
+        function validateRegularPrice() {
+            const regularPrice = regularPriceInput.value.trim();
+            const errorElement = document.getElementById('regularPriceError');
+            errorElement.textContent = "";
+    
+            if (regularPrice === '') {
+                errorElement.textContent = 'Regular price is required.';
+                return false;
+            }
+    
+            if (isNaN(regularPrice) || parseFloat(regularPrice) < 0) {
+                errorElement.textContent = 'Regular price must be a non-negative number.';
+                return false;
+            }
+    
+            return true;
         }
-
-        return true;
-    }
-    function validateCategory() {
-        const category = categoryInput.value;
-        if (category === '') {
-            document.getElementById('categorynameError').textContent = 'Category is required.';
-            return false;
+    
+        function validateOffer() {
+            const offer = offerInput.value.trim();
+            const errorElement = document.getElementById('promotionalPriceError');
+            errorElement.textContent = "";
+    
+            if (offer === '') {
+                errorElement.textContent = 'Offer is required.';
+                return false;
+            }
+    
+            if (isNaN(offer) || parseFloat(offer) < 0) {
+                errorElement.textContent = 'Offer must be a non-negative number.';
+                return false;
+            }
+    
+            if (offer > 100) {
+                errorElement.textContent = 'Please enter an offer around 100%.';
+                return false;
+            }
+    
+            return true;
         }
-        return true;
-    }
-    form.addEventListener('submit', function (event) {
-        // Reset error messages
-        document.getElementById('productnameError').textContent = '';
-        document.getElementById('descriptionError').textContent = '';
-        document.getElementById('regularPriceError').textContent = '';
-        document.getElementById('quantityError').textContent = '';
-        document.getElementById('colorError').textContent = '';
-        document.getElementById('imageError').textContent = '';
-        document.getElementById('categorynameError').textContent = '';
-
-        // Perform validation
-        const isValidProductName = validateProductName();
-        const isValidDescription = validateDescription();
-        const isValidProductPrice = validateProductPrice();
-        const isValidSalesPrice = validateSalesPrice();
-        const isValidQuantity = validateQuantity();
-        const isValidColor = validateColor();
+    
+        function validateQuantity() {
+            const quantity = quantityInput.value.trim();
+            const errorElement = document.getElementById('quantityError');
+            errorElement.textContent = "";
+    
+            if (quantity === '' || /^\s*$/.test(quantity)) {
+                errorElement.textContent = 'Quantity is required.';
+                return false;
+            }
+    
+            return true;
+        }
+    
+        function validateColor() {
+            const color = colorInput.value.trim();
+            const errorElement = document.getElementById('colorError');
+            errorElement.textContent = "";
+    
+            if (color === '' || /^\s*$/.test(color)) {
+                errorElement.textContent = 'Color is required.';
+                return false;
+            }
+    
+            return true;
+        }
+    
+        function validateImage() {
+            const files = imageInput.files;
+            const errorElement = document.getElementById('imageError');
+            errorElement.textContent = "";
+    
+            if (files.length === 0) {
+                errorElement.textContent = 'Image is required.';
+                return false;
+            }
+    
+            const selectedFileType = files[0].type;
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    
+            if (!allowedTypes.includes(selectedFileType)) {
+                errorElement.textContent = 'Invalid file type, Add Images';
+                return false;
+            }
+    
+            return true;
+        }
+    
+        function validateCategory() {
+            const category = categoryInput.value;
+            const errorElement = document.getElementById('categorynameError');
+            errorElement.textContent = "";
+    
+            if (category === '') {
+                errorElement.textContent = 'Category is required.';
+                return false;
+            }
+    
+            return true;
+        }
+    
+        form.addEventListener('submit', function (event) {
+            const isValidProductName = validateProductName();
+            const isValidDescription = validateDescription();
+            const isValidRegularPrice = validateRegularPrice();
+            const isValidOffer = validateOffer();
+            const isValidColor = validateColor();
+            const isValidQuantity = validateQuantity();
         const isValidImage = validateImage();
         const isValidCategory = validateCategory();
 
-        // Prevent form submission if validation fails
-        if (!isValidProductName || !isValidDescription || !isValidProductPrice || !isValidSalesPrice || !isValidQuantity || !isValidColor || !isValidImage || !isValidCategory) {
-            console.log("enter");
+        if (!isValidProductName || !isValidDescription || !isValidRegularPrice || !isValidOffer || !isValidQuantity || !isValidColor || !isValidImage || !isValidCategory) {
             event.preventDefault();
         }
     });
-
-  
 </script>
+
+    
+    
 
     <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

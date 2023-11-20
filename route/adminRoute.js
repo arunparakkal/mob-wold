@@ -55,7 +55,9 @@ admin_route.get("/unblock",auth.isLogin,adminController.unblockUser)
 admin_route.get("/category",auth.isLogin,categoryController.loadCategory)
 admin_route.post("/addcategory",upload.single("file"),categoryController.addCategory)
 admin_route.get("/editcategory",auth.isLogin,categoryController.editCategory)
-admin_route.post("/editcategory",upload.single("file"),categoryController.updateCategory)
+
+
+admin_route.post("/editcategory",upload.single("image"),categoryController.updateCategory)
 admin_route.get("/addproduct",auth.isLogin,productController.addProduct)
 admin_route.post("/addproduct",uploadProduct.array("file"),productController.createProducts)
 admin_route.get("/products",auth.isLogin,productController.products)

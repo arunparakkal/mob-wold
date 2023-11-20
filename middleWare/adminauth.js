@@ -4,7 +4,7 @@ const mongoose = require("mongoose")
 const isLogin = async(req,res,next)=>{
     try{
 
-        if(req.session&&req.session.user_id ){
+        if(req.session&&req.session.admin_id ){
                       
             next()
             
@@ -22,7 +22,7 @@ const isLogin = async(req,res,next)=>{
 const isLogout = async(req,res,next)=>{
     try{
        
-        if(req.session.user_id){
+        if(req.session.admin_id){
 
           res.redirect("dashboard")
           

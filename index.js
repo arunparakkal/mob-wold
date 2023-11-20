@@ -24,9 +24,11 @@ app.use("/",userRoute)
 
 const adminRoute = require("./route/adminRoute")
 app.use("/admin",adminRoute)
-app.use((req,res,next)=>{
-res.status(400).render("404")
-})
+
+
+// app.use((req,res,next)=>{
+// res.status(400).render("404")
+// })
 
 app.listen(2000,()=>{console.log("start");})
 

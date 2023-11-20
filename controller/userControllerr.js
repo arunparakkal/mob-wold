@@ -476,8 +476,9 @@ const insertData = async (req, res) => {
             userAddress.addresses.push(address)
             userAddress.save()
         }
+        console.log("ooiuimport",req.body.add);
         if (req.body.add == "scre") {
-
+ 
             res.redirect("/checkout")
         } else {
             res.redirect("/addresses")
@@ -618,8 +619,26 @@ const Checkout = async (req, res) => {
 
             const AddresData = await Address?.find({ userId: req.session.user_id });
             const UserAddress = AddresData[0]?.addresses;
-
+           
+           
+    //         if(UserAddress.length == 1){
+    //             const addId = UserAddress[0]._id
+             
+    //     const user = await Address.findOne({ userId: req.session.user_id })
+    //     console.log("user",user);
+        
+       
+      
+        
+    //  console.log("jj",user.addresses.isDefault);
+    //     user.addresses.isDefault = true
+    //     await user.save()
+    //     console.log("jj",user.addresses.isDefault);
+    //     const f = await Address.find()
+            
+    //     }
             const defaultAddress = UserAddress?.find(address => address.isDefault == true);
+                   
             const discount = discountAmount;
             const coupons = await Coupon.find();
             const walletData = await Wallet.findOne({ user: req.session.user_id })

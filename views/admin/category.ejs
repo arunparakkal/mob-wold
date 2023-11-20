@@ -35,8 +35,8 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Image</label>
-                                    <input type="file" name="file" class="form-control" id="category_image" accept="image/*" />
-                                    <p style="color: red;" id="imageError" class="error-message"></p>
+                                    <input required type="file" name="file" class="form-control" id="category_image" accept="image/*" />
+                                    <p style="color: red;" id="imageError" class="error-message" ></p>
                                 </div>
                               
                                 <div class="d-grid">
@@ -107,33 +107,64 @@
         </section> <!-- content-main end// -->
   <script>
     
-    
-    document.getElementById("category_image").addEventListener("change" ,function(){
-       
-        const fileInput = this;
-        const errorElement = document.getElementById('imageError')
-        errorElement.textContent = ""
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
-      
-        if(fileInput.files.length >0){
-            const selectFleType = fileInput.files[0].type;
-            if(!allowedTypes.includes(selectFleType)){
-                errorElement.textContent = "Invalid file type,Add Images"
-                const value = "invalid"
-            }
-        }
-    })
-
-    document.getElementById("categoryForm").addEventListener("submit", function (event) {
-        
-      
+    document.getElementById("category_image").addEventListener("change", function () {
+    const fileInput = this;
     const errorElement = document.getElementById('imageError');
-    
-    if (errorElement.textContent !== '') {
-      // An error message is displayed, prevent form submission
-      event.preventDefault();
+    errorElement.textContent = "";
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (fileInput.files.length > 0) {
+        const selectedFileType = fileInput.files[0].type;
+
+        if (!allowedTypes.includes(selectedFileType)) {
+            errorElement.textContent = "Invalid file type. Please add images with types: JPEG, PNG, GIF.";
+        }
     }
-  });
+});
+
+document.getElementById("categoryForm").addEventListener("submit", function (event) {
+    const categoryName = document.getElementById('category_name').value.trim();
+    const description = document.querySelector('textarea[name="description"]').value.trim();
+    const offer = document.querySelector('input[name="offer"]').value.trim();
+    const errorElement = document.getElementById('imageError');
+    let formIsValid = true;
+
+    // Validate Category Name
+    if (categoryName === '') {
+        document.getElementById('categoryNameError').textContent = "Category name is required.";
+        formIsValid = false;
+    } else {
+        document.getElementById('categoryNameError').textContent = "";
+    }
+
+    // Validate Description
+    if (description === '') {
+        document.getElementById('descriptionError').textContent = "Description is required.";
+        formIsValid = false;
+    } else {
+        document.getElementById('descriptionError').textContent = "";
+    }
+
+    // Validate Offer
+    if (offer === '' || isNaN(offer)) {
+        document.getElementById('promotionalPriceError').textContent = "Invalid offer value.";
+        formIsValid = false;
+    } else {
+        document.getElementById('promotionalPriceError').textContent = "";
+    }
+
+    // Validate Image
+    if (errorElement.textContent !== '') {
+        formIsValid = false;
+    }
+
+    // If the form is not valid, prevent submission
+    if (!formIsValid) {
+        event.preventDefault();
+    }
+});
+
   </script>
         
         <footer class="main-footer font-xs">

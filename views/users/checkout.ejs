@@ -162,14 +162,23 @@
                                             <label class="form-check-label" for="upiPayment">Online Payment</label>
 
                                         </div>
-
+                                        <% if(!walletData){%>
+                                            <div class="form-group form-check">
+                                                <input form="paymentForm" type="radio" name="paymentmethod" id="f-option5"
+                                                    value="wallet">
+                                                <label class="form-check-label" for="wallet">wallet(walletBalacne:&#8377;
+                                                    0)
+                                                </label>
+                                            </div>
+                                            <% }else { %>
                                         <div class="form-group form-check">
                                             <input form="paymentForm" type="radio" name="paymentmethod" id="f-option5"
                                                 value="wallet">
                                             <label class="form-check-label" for="wallet">wallet(walletBalacne:&#8377;
-                                                <%=walletData.balance %>)
+                                                <%=walletData?.balance %>)
                                             </label>
                                         </div>
+                                        <% } %>
                                     </div><!-- End .payment-method -->
 
                                     <button type="submit" id="place-order" class="site-btn">Place oder</button>

@@ -18,7 +18,7 @@ const loadLogin = async(req,res)=>{
 const Logout = async (req, res) => {
     try {
        
-        delete req.session.user_id
+        delete req.session.admin_id
         res.redirect("login")
 
     }
@@ -105,7 +105,7 @@ const orderListing = async (req, res) => {
       });
     } catch (error) {
       console.log(error.message);
-      res.render('404',{user:req.session.user_id})
+      res.render('404',{user:req.session.admin_id})
       res.status(500).send('Internal Server Error');
     }
   };

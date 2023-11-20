@@ -14,7 +14,7 @@ const loadCategory = async (req, res) => {
 const addCategory = async (req, res) => {
    
     try {
-        
+    
         await categoryHelper.addcategory(req, res)
     }
     catch (error) {

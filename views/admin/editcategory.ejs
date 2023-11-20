@@ -1,29 +1,28 @@
 <%- include("../layouts/adminheader")%>
+
         <section class="content-main mt-80 mb-80">
             <div class="card mx-auto card-login">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Edit profile</h4>
-                    <form method="post" action="editcategory" enctype="multipart/form-data">
-                      
-                       <input type="hidden" name="userId" value="<%= userId %>">
+                    <h4 class="card-title mb-4">Edit Product</h4>
+                
+                    <form action="/admin/editcategory" method="POST" enctype="multipart/form-data" id="editCategoryForm">
+                        <input type="hidden" name="userId" value="<%= userId %>">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                        
-                            <input class="form-control" name="categoryname" placeholder="category Name" type="text" value="<%= category.categoryname %>">
+                            <input class="form-control" name="categoryname" placeholder="Category Name" type="text" value="<%= category.categoryname %>">
+                            <p style="color: red; display: none;" id="nameError" class="error-message">Category name is required.</p>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">description</label>
+                            <label class="form-label">Description</label>
                             <input class="form-control" name="description" placeholder="Your description" type="text" value="<%= category.description %>">
-                        </div> <!-- form-group// -->
-                         <!-- form-group// --> <div class="mb-3">
-                            <label class="form-label">image</label>
-                            <input class="form-control" name="image" placeholder="category image" type="file" >
-                        </div> <!-- form-group// -->
-                       <!-- form-group// -->
- 
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input class="form-control" name="image" placeholder="Category image" type="file">
+                        </div>
                         <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100"> Edit </button>
-                        </div> <!-- form-group// -->
+                            <button class="btn btn-primary w-100" type="submit">Save Edit</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -42,6 +41,48 @@
     <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/admin-assets/js/main.js" type="text/javascript"></script>
+    <!-- Add this script to your HTML file -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("editCategoryForm").addEventListener("submit", function (event) {
+                const categoryName = document.querySelector('input[name="categoryname"]').value.trim();
+                const errorElement = document.getElementById('nameError');
+                let formIsValid = true;
+    
+                // Validate Category Name
+                if (categoryName === '' || /^\s*$/.test(categoryName)) {
+                    errorElement.textContent = "Category name is required.";
+                    errorElement.style.display = "block"; // Show the error message
+                    formIsValid = false;
+                } else {
+                    errorElement.textContent = "";
+                    errorElement.style.display = "none"; // Hide the error message
+                }
+    
+                // If the form is not valid, prevent submission
+                if (!formIsValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    <!-- <script>
+        const catbtn = document.querySelector('.catbtn').addEventListener('click',(e)=>{
+            e.preventDefault()
+
+            fetch('/admin/editcategory',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    name:'ghg'
+                })
+            })
+          
+        })
+    </script> -->
 </body>
 
 

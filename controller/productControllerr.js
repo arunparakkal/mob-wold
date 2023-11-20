@@ -18,8 +18,8 @@ const addProduct = async (req, res) => {
 const createProducts = async (req, res) => {
     try {
 
-        const { productname, categoryname, description, quantity, color, Productprice, Salesprice } = req.body;
-
+        const { productname, categoryname,  description, quantity, color, Productprice, Salesprice } = req.body;
+const offer = Salesprice
         const categories = await Category.findOne({ categoryname: categoryname }).lean()
 
       
@@ -49,6 +49,7 @@ const createProducts = async (req, res) => {
             description,
             quantity,
             color,
+            offer,
             productprice,
             salesprice,
             image: images,
@@ -57,7 +58,7 @@ const createProducts = async (req, res) => {
         });
         const saveProduct = await productadd.save();
       
-
+        
         const products = await Product.find()
 
         res.redirect('products')
@@ -108,7 +109,7 @@ const editUpdateProduct = async (req, res) => {
 
         const { categoryname, description, quantity, color } = req.body
         const Categoryname = req.body.categoryname
-        console.log("--",req.body);
+    
         const productname = req.body.productname.trim()
         const Productprice = req.body.Productprice
         const Salesprice = req.body.Salesprice
