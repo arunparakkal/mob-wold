@@ -72,7 +72,7 @@ const products = async (req, res) => {
 
         const products = await Product.find()
 
-        res.render('productList', { products })
+        res.render('productlist', { products })
     } catch (error) {
         console.log(error.message)
     }
