@@ -50,10 +50,16 @@
                                         <div class="pt-3 mb-4">
                                             <button class="btn btn-dark btn-lg btn-block" type="submit">Verify OTP</button> <!-- Change type to "submit" -->
                                         </div>
+                                       
+                                        <% if (typeof message !== 'undefined') { %>
+                                          
+                                            <p style="color: red;"><%= message %></p>
+                                            <% } %>
+                                           
                                         <div id="otpExpirationMessage"></div>
                                         <div id="otpTimer" class="text-center"></div> 
-
-         <a  class="btn btn-sm btn-light" href="recentOpt?userId=<%= userId %>">Resend OTP</a>
+                                           
+         <a  class="btn btn-sm btn-light" href="recentotp?userId=<%= userId %>">Resend OTP</a>
 
                                         
                                     </form>

@@ -72,8 +72,8 @@ const sendVerifyMail = async (name, email, otp) => {
 }
 const LoadHome = async (req, res) => {
     try {
-        const products = await product.find({isListed: true})
-   
+        const products = await product.find({ isListed: true })
+
         res.render("users/home", { products });
 
     }
@@ -95,7 +95,7 @@ const Logout = async (req, res) => {
 const LoadHomee = async (req, res) => {
     try {
 
-        const products = await product.find({isListed: true})
+        const products = await product.find({ isListed: true })
         const Id = req.session.user_id
 
         const userData = await User.findOne({ _id: Id });
@@ -125,9 +125,9 @@ const inserUser = async (req, res) => {
     try {
         const Spassword = await passwordHash(req.body.password)
         const existEmail = await User.findOne({ email: req.body.email });
-        // if (existEmail) {
-        // //   return res.render("users/siginup",{ message: "Email already exists." });
-        // }
+        if (existEmail) {
+            return res.render("users/siginup", { message: "Email already exists." });
+        }
 
         const CSpassword = await passwordHash(req.body.Cpassword)
 
@@ -139,8 +139,8 @@ const inserUser = async (req, res) => {
             is_admin: 0
 
         })
-
-        const userData = await user.save()
+        req.session.registerData = user
+        const userData = req.session.registerData
         const CpasswordMatch = await bcrypt.compare(req.body.Cpassword, Spassword)
         if (CpasswordMatch) {
 
@@ -173,6 +173,7 @@ const recentOpt = async (req, res) => {
         console.log("recent", objj.OTP);
         await sendVerifyMail(req.body.name, req.body.email, otp)
         const userData = await User.findOne({ _id: userId });
+        console.log("user",userData);
         res.redirect(`otp?id=${userData._id}`);
     }
     catch (error) {
@@ -208,13 +209,25 @@ const VerifyOtp = async (req, res) => {
 
         if (objj.OTP === Newopt) {
             delete objj.OTP
-            console.log("new", Newopt);
-            console.log("obj", objj.OTP);
-            const id = req.body.userId.trim()
+            const registerationData = req.session.registerData
 
-            const udpateinfo = await User.updateOne({ _id: id }, { $set: { is_verified: 1 } })
-            console.log("kdjkdjd");
+            registerationData.is_verified = 1
+            const newUser = new User(registerationData)
+            if (newUser) {
+                const userData = await newUser.save()
+                if (userData) {
+                    delete req.session.registerData
+                } else {
+                    console.log("registeration failed");
+                }
+            } else {
+                console.log("new userNot found");
+            }
             res.redirect("/")
+        } else {
+            const userId = req.body.userId;
+            const message = "Incorrect OTP. Please try again.";
+            res.render('users/otp', { userId, message });
         }
     }
     catch (error) {
@@ -272,6 +285,7 @@ const verifyLogin = async (req, res) => {
 }
 const loadShop = async (req, res) => {
     try {
+        const cart = await Cart.find()
         const page = parseInt(req.query.page) || 1;
         const itemsPerPage = 3;
         let totalProductsCount;
@@ -279,7 +293,7 @@ const loadShop = async (req, res) => {
         let totalPages;
 
         const selectedCategory = req.query.categoryname || 'all';
-        console.log("selected category 2.0",selectedCategory);
+        console.log("selected category 2.0", selectedCategory);
 
         const categories = await Category.aggregate([
             {
@@ -304,7 +318,7 @@ const loadShop = async (req, res) => {
                 $match: { hasListedProducts: true },
             },
         ]);
-       
+
         if (selectedCategory !== 'all') {
             const category = await Category.findOne({ categoryname: selectedCategory });
 
@@ -452,8 +466,8 @@ const insertData = async (req, res) => {
         const { name, mobile, address1, address2, state, postalCode, country } = req.body
         const userAddress = await Address.findOne({ userId: req.session.user_id })
         let isDefault = false
-        if( !userAddress ||userAddress?.addresses?.length < 1){
-            isDefault=true
+        if (!userAddress || userAddress?.addresses?.length < 1) {
+            isDefault = true
         }
 
         const address = {
@@ -469,7 +483,7 @@ const insertData = async (req, res) => {
 
         }
 
-        console.log('checking address',address);
+        console.log('checking address', address);
 
         if (!userAddress || (userAddress && userAddress.addresses.length < 1)) {
             const newAddress = new Address({
@@ -484,9 +498,9 @@ const insertData = async (req, res) => {
             userAddress.addresses.push(address)
             userAddress.save()
         }
-        console.log("ooiuimport",req.body.add);
+        console.log("ooiuimport", req.body.add);
         if (req.body.add == "scre") {
- 
+
             res.redirect("/checkout")
         } else {
             res.redirect("/addresses")
@@ -545,11 +559,11 @@ const AddtoCart = async (req, res) => {
 
 
         if (productIndex !== -1) {
+            // Product is already in the cart
             cart.products[productIndex].quantity += quantity
             cart.products[productIndex].subTotal =
                 cart.products[productIndex].price * cart.products[productIndex].quantity
-
-
+            return res.json({ redirectToCart: true });
         } else {
 
             cart.products.push({
@@ -559,7 +573,7 @@ const AddtoCart = async (req, res) => {
                 subTotal: productData.salesprice
             })
         }
-        productData.quantity -= 1
+        // productData.quantity -= 1
         cart.cartSubtotal = cart.products.reduce((total, product) => {
             return total + product.quantity * product.price
         }, 0)
@@ -567,7 +581,7 @@ const AddtoCart = async (req, res) => {
             return total + product.quantity * product.price
         }, 0)
 
-        const newCart = await Promise.all([cart.save(), productData.save()])
+        const newCart = await Promise.all([cart.save()])
 
         return res.json(newCart)
 
@@ -627,26 +641,26 @@ const Checkout = async (req, res) => {
 
             const AddresData = await Address?.find({ userId: req.session.user_id });
             const UserAddress = AddresData[0]?.addresses;
-           
-           
-    //         if(UserAddress.length == 1){
-    //             const addId = UserAddress[0]._id
-             
-    //     const user = await Address.findOne({ userId: req.session.user_id })
-    //     console.log("user",user);
-        
-       
-      
-        
-    //  console.log("jj",user.addresses.isDefault);
-    //     user.addresses.isDefault = true
-    //     await user.save()
-    //     console.log("jj",user.addresses.isDefault);
-    //     const f = await Address.find()
-            
-    //     }
+
+
+            //         if(UserAddress.length == 1){
+            //             const addId = UserAddress[0]._id
+
+            //     const user = await Address.findOne({ userId: req.session.user_id })
+            //     console.log("user",user);
+
+
+
+
+            //  console.log("jj",user.addresses.isDefault);
+            //     user.addresses.isDefault = true
+            //     await user.save()
+            //     console.log("jj",user.addresses.isDefault);
+            //     const f = await Address.find()
+
+            //     }
             const defaultAddress = UserAddress?.find(address => address.isDefault == true);
-                   
+
             const discount = discountAmount;
             const coupons = await Coupon.find();
             const walletData = await Wallet.findOne({ user: req.session.user_id })
@@ -698,6 +712,7 @@ const Changepassword = async (req, res) => {
             message = req?.query?.message
         }
 
+
         res.render("users/pwdupdate", { message })
     }
     catch (error) {
@@ -708,6 +723,7 @@ const Changepassword = async (req, res) => {
 const addPassword = async (req, res) => {
     try {
         const { password, npassword, rpasword } = req.body
+
         const userData = await User.findOne({ _id: req.session.user_id })
         const checkpassword = await bcrypt.compare(password, userData.password)
 
@@ -796,22 +812,20 @@ const placeOrder = async (req, res) => {
                 paymentmethod: paymentMethod,
             });
             req.session.newOrder = newOrder;
-            const savedOrder = req.session.newOrder      
-          
+            const savedOrder = req.session.newOrder
+
             const generateOrder = await generateOrderRazorpay(
                 savedOrder._id,
                 cart.cartTotal,
-                
+
             );
-            cart.products = []
-            await cart.save()
-            await newOrder.save()
-      
+
+            console.log('saved', savedOrder)
             res.json({ generateOrder, method: 'online' });
         } else if (paymentMethod === 'wallet') {
             if (walletData.balance < cart.cartTotal) {
 
-                return res.json({ method:"wallet", nowallet: false, error: "Wallet have no enough balance" })
+                return res.json({ method: "wallet", nowallet: false, error: "Wallet have no enough balance" })
             } else {
 
                 // const walletData = await Wallet.findOne({ user: req.session.user_id })
@@ -854,12 +868,12 @@ const placeOrder = async (req, res) => {
                 });
                 await wallet.save();
                 await newOrder.save();
-                console.log('newOrder ',newOrder);
+                console.log('newOrder ', newOrder);
 
                 cart.products = [];
                 await cart.save();
-                
-                res.status(200).json({newOrder,method:"wallet"});
+
+                res.status(200).json({ newOrder, method: "wallet" });
 
             }
 
@@ -893,48 +907,88 @@ const generateOrderRazorpay = (orderId, total) => {
     })
 
 }
+
+
 const verifyOrderPayment = (details) => {
     console.log("DETAILS : " + JSON.stringify(details));
     return new Promise((resolve, reject) => {
         const crypto = require('crypto');
 
-        let hmac = crypto.createHmac('sha256', 'UYShvJyM5iv74aB3yUZ5lNvq');
+        let hmac = crypto.createHmac('sha256', 'UYShvJyM5iv74aB3yUZ5lNvq')
         hmac.update(
-            String(details['order']['generateOrder']['id']) + '|' +// Access order_id directly
-            String(details['payment']['razorpay_payment_id'])
+            String(details.order.razorpay_order_id) + '|' +
+            String(details.order.razorpay_payment_id)
         );
+        
         hmac = hmac.digest('hex');
 
-        console.log('orderid', details['order']['generateOrder']['id']); // Corrected access to order_id
-        console.log('paymentid', details['payment']['razorpay_payment_id']);
-        console.log('signature', details['payment']['razorpay_signature']);
+        console.log('orderid', details.order.razorpay_order_id);
+        console.log('paymentid', details.order.razorpay_payment_id);
+        console.log('signature', details.order.razorpay_signature);
 
-        if (hmac === details['payment']['razorpay_signature']) {
+        console.log('Generated HMAC:', hmac);
+        console.log('Razorpay Signature:', details.order.razorpay_signature);
+
+        if (hmac === details.order.razorpay_signature) {
             console.log("Verify SUCCESS");
             resolve();
         } else {
             console.log("Verify FAILED");
             reject();
         }
-    });
+    })
 };
+
+// const verifyOrderPayment = (details) => {
+//     console.log("DETAILS : " + JSON.stringify(details));
+//     return new Promise((resolve, reject) => {
+//         const crypto = require('crypto');
+
+//         let hmac = crypto.createHmac('sha256', 'UYShvJyM5iv74aB3yUZ5lNvq')
+//         hmac.update(
+//             String(details.order.razorpay_order_id) + '|' +
+//             String(details.payment.razorpay_payment_id)
+//         );
+        
+//         hmac = hmac.digest('hex');
+
+//         console.log('orderid', details.order.razorpay_order_id);
+//         console.log('paymentid', details.order.razorpay_payment_id);
+//         console.log('signature', details.order.razorpay_signature);
+
+//         console.log('Generated HMAC:', hmac);
+// console.log('Razorpay Signature:', details.order.razorpay_signature);
+
+// if (hmac === details.order.razorpay_signature) {
+//     console.log("Verify SUCCESS");
+//     resolve();
+// } else {
+//             console.log("Verify FAILED");
+//             reject();
+//         }
+//     })
+// };
+
 
 
 const verifyRazorpayPayment = async (req, res) => {
-
+    console.log('funtion')
     const userId = req.session.user_id;
-    const cart = await Cart.findOne({ user: userId }).populate('products.product');
+    const cart = await Cart.findOne({ userId: userId }).populate('products.productId');
+    console.log('cartzz',cart)
     try {
         const { razorpayOrderId, razorpayPaymentId, secret } = req.body;
         verifyOrderPayment(req.body)
             .then(async () => {
+                console.log("Payment SUCCESSFUL");
                 const orders = req.session.newOrder
                 const saveOrder = new Order(orders)
-
+                console.log('orderee', saveOrder)
                 await saveOrder.save()
-                
-                const cart = req.body.cart
-              
+
+                cart.products = [];
+
+                await cart.save();
                 res.json({ status: true });
 
             }).catch((err) => {
@@ -957,7 +1011,7 @@ const cartQuantity = async (req, res) => {
         const cart = await Cart.findOne({ userId })
         if (!cart) {
             return res.json({ message: 'cart not found' })
-        }      
+        }
         const cartProduct = cart.products.find((product) => {
             return product.productId._id.toString() === productId
         })
@@ -965,14 +1019,14 @@ const cartQuantity = async (req, res) => {
         console.log(products.quantity);
         const stockAnalize = cartProduct.quantity - quantity
 
-        if (stockAnalize < 0) {           
-            products.quantity -= 1
-        } else if (stockAnalize > 0) {
-        
-            products.quantity += 1
-        }
-        await products.save()
-     
+        // if (stockAnalize < 0) {           
+        //     products.quantity -= 1
+        // } else if (stockAnalize > 0) {
+
+        //     products.quantity += 1
+        // }
+        // await products.save()
+
         if (!cartProduct) {
             return res.json({ message: 'product not found' })
         }
@@ -988,7 +1042,7 @@ const cartQuantity = async (req, res) => {
             total += productSubtotal
 
         }
-        products.quantity -= 1
+        // products.quantity -= 1
         cart.cartSubtotal = total;
         cart.cartTotal = total
         const updatedCart = await cart.save()
@@ -1069,14 +1123,15 @@ const listOrder = async (req, res) => {
 
         const totalOrders = await Order.countDocuments({ userId: userId });
         const totalPages = Math.ceil(totalOrders / perPage);
-console.log('usee',userId);
+        console.log('usee', userId);
         const order = await Order.find({ userId })
-        .populate('products.productId')
-        .sort({ orderDate: -1 })
-        .skip((page - 1) * perPage)
-        .limit(perPage);
-            
-console.log('orders',order);
+            .populate('products.productId')
+            .sort({ orderDate: -1 })
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+        console.log('orders', JSON.stringify(order[0].products[0].productId.image[0]));
+        
         res.render('users/orderlist', {
             order,
             user,
@@ -1385,18 +1440,18 @@ const errorpage = async (req, res) => {
         res.render('users/404', { user: req.session.user_id })
     }
 }
-const search = async(req,res)=>{
-    try{
-      const serachQuery = req.body.search
-      const queryCondition = {
-        categoryname:{$regex:new RegExp(serachQuery,"i")}
-      }
-      console.log("queryCondition",queryCondition);
-      await renderProductsPage(req, res, queryCondition);
+const search = async (req, res) => {
+    try {
+        const serachQuery = req.body.search
+        const queryCondition = {
+            categoryname: { $regex: new RegExp(serachQuery, "i") }
+        }
+        console.log("queryCondition", queryCondition);
+        await renderProductsPage(req, res, queryCondition);
 
-     
+
     }
-    catch(error){
+    catch (error) {
         console.log(error.message);
     }
 }
@@ -1438,14 +1493,14 @@ const renderProductsPage = async (req, res, queryConditions) => {
             const selectedCategory = categories.find((cat) => cat.categoryname === categoryname);
             console.log("kdkdjd");
             if (!selectedCategory) {
-            
+
                 return res.render('users/products', { categories, products: [], categoryname });
             }
 
             queryConditions.categoryname = selectedCategory.categoryname;
         }
         totalProductsCount = await product.countDocuments(queryConditions);
-  
+
         products = await product.find(queryConditions)
             .sort({ date: -1 })
             .skip((page - 1) * itemsPerPage)
@@ -1460,12 +1515,13 @@ const renderProductsPage = async (req, res, queryConditions) => {
             categoryname,
             currentPage: page,
             totalPages: totalPages,
-            user:req.session.user_id
+            user: req.session.user_id
         });
     } catch (error) {
         console.log(error.message);
     }
 };
+
 module.exports = {
-    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge, walletHistory, returnOrder, errorpage,search,
+    LoadHome, loadsignUp, inserUser, otppage, VerifyOtp, loadLogin, verifyLogin, LoadHomee, loadShop, Logout, loadprofile, editProfile, updateUser, LoadAddress, insertData, LoadAllAddress, LoadCart, AddtoCart, recentOpt, Checkout, Default, Changepassword, addPassword, Checkoutaddress, placeOrder, cartQuantity, RemoveCart, placedOrder, listOrder, verifyRazorpayPayment, generateOrderRazorpay, orderdetail, cancelOrder, Foregetpassword, Foregotverify, ForegotpasswordLoad, resetpassword, Walletrecharge, walletHistory, returnOrder, errorpage, search
 }

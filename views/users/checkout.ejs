@@ -113,6 +113,7 @@
                             </div>
                             <div class="apply-coupon">
                                 <!-- Apply Coupon Section (conditionally rendered) -->
+                             
                                 <% if (coupon) { %>
                                     <div class="input-group">
                                         <input form="paymentForm" type="text" id="couponCode" class="form-control"
@@ -134,7 +135,8 @@
                                         </div>
                                         <% } %>
                             </div><!-- End .apply-coupon -->
-                            <% cart.products.forEach(cartItem=> { %>
+                            
+
                                 <div class="checkout__order__total">
                                     <ul>
                                         <li>Subtotal <span>&#8377; <%= cart.cartSubtotal.toFixed(2) %></span></li>
@@ -146,7 +148,7 @@
                                     </ul>
 
                                 </div>
-                                <% }) %>
+                                
 
                                     <div class="payment-method">
                                         <h4>Payment Method</h4>
@@ -164,21 +166,23 @@
                                         </div>
                                         <% if(!walletData){%>
                                             <div class="form-group form-check">
-                                                <input form="paymentForm" type="radio" name="paymentmethod" id="f-option5"
-                                                    value="wallet">
-                                                <label class="form-check-label" for="wallet">wallet(walletBalacne:&#8377;
+                                                <input form="paymentForm" type="radio" name="paymentmethod"
+                                                    id="f-option5" value="wallet">
+                                                <label class="form-check-label"
+                                                    for="wallet">wallet(walletBalacne:&#8377;
                                                     0)
                                                 </label>
                                             </div>
                                             <% }else { %>
-                                        <div class="form-group form-check">
-                                            <input form="paymentForm" type="radio" name="paymentmethod" id="f-option5"
-                                                value="wallet">
-                                            <label class="form-check-label" for="wallet">wallet(walletBalacne:&#8377;
-                                                <%=walletData?.balance %>)
-                                            </label>
-                                        </div>
-                                        <% } %>
+                                                <div class="form-group form-check">
+                                                    <input form="paymentForm" type="radio" name="paymentmethod"
+                                                        id="f-option5" value="wallet">
+                                                    <label class="form-check-label"
+                                                        for="wallet">wallet(walletBalacne:&#8377;
+                                                        <%=walletData?.balance %>)
+                                                    </label>
+                                                </div>
+                                                <% } %>
                                     </div><!-- End .payment-method -->
 
                                     <button type="submit" id="place-order" class="site-btn">Place oder</button>
@@ -292,29 +296,8 @@
                                     "image": "https://example.com/your_logo",
                                     "order_id": response.generateOrder.id,
                                     "handler": function (response) {
-                                        if (response.razorpay_payment_id) {
-                                            Swal.fire({
-                                                title: "Payment Success",
-                                                text: "Your payment has been successful!",
-                                                icon: "success",
-                                                showCancelButton: true,
-                                                confirmButtonText: "View Orders",
-                                                cancelButtonText: "Continue Shopping",
-                                                reverseButtons: true
-                                            }).then(function (result) {
-                                                if (result.value) {
-                                                    window.location.href = '/orderlist';
-                                                } else if (result.dismiss === "cancel") {
-                                                    window.location.href = "/shop";
-                                                }
-                                            });
-                                        } else {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Payment Failed',
-                                                text: 'Payment failed! '
-                                            });
-                                        }
+                                        verifyPayment(response, status)
+
                                     },
                                     "prefill": {
                                         "name": "Gaurav Kumar",
@@ -372,7 +355,22 @@
                 success: (response) => {
                     if (response.status) {
 
-                        location.href = '/orderlist'
+                        Swal.fire({
+                            title: "Payment Success",
+                            text: "Your payment has been successful!",
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonText: "View Orders",
+                            cancelButtonText: "Continue Shopping",
+                            reverseButtons: true
+                        }).then(function (result) {
+                            if (result.value) {
+                                window.location.href = '/orderlist';
+                            } else if (result.dismiss === "cancel") {
+                                window.location.href = "/shop";
+                            }
+                        });
+
                     } else {
 
                         Swal.fire({

@@ -46,6 +46,7 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
+                                         
                                             <label class="form-label">offer</label>
                                             <input value="<%=productData.offer%>" name="Salesprice" type="text" class="form-control">
                                             <p class="error-message" id="promotionalPriceError"></p>
@@ -250,11 +251,19 @@ function validateProductPrice() {
     }
     return true;
 }
-
+ 
     function validateQuantity() {
         const quantity = quantityInput.value.trim();
-        if (quantity === '') {
+       
+        if (quantity === '' ) {
             document.getElementById('quantityError').textContent = 'Quantity is required.';
+            return false;
+        }
+       
+      
+        if ( parseFloat(quantity) < 0 ) {
+          
+            document.getElementById('quantityError').textContent = 'quantity must be none-negative number';
             return false;
         }
         return true;
@@ -292,9 +301,10 @@ function validateProductPrice() {
         const isValidColor = validateColor();
         // const isValidImage = validateImage();
         // const isValidCategory = validateCategory();
+     
 
 console.log(isValidProductName,isValidDescription,isValidProductPrice,isValidSalesPrice,isValidQuantity,isValidColor);
-      
+    
        if(isValidProductName&&isValidDescription&&isValidProductPrice&&isValidSalesPrice&&isValidQuantity&&isValidColor){
        form.submit()
        }

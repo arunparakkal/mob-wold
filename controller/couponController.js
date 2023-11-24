@@ -106,7 +106,7 @@ const couponGet = async (req, res) => {
   try {
 
       const calculateTotalPrice = req.session.calculateTotalPrice;
-      console.log('ca',calculateTotalPrice)
+    
       const currentDate = new Date();
       const coupons = await Coupon.find({
           isListed: true,

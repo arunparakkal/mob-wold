@@ -125,7 +125,7 @@ const orderListing = async (req, res) => {
   }
   const updateStatus = async(req, res)=>{
     try{
-       
+      
         const { orderId } = req.params;
         const { newStatus } = req.body;
         console.log('status',req.body)
@@ -437,8 +437,9 @@ async function calculateDeliveredOrderTotal() {
   
   
   
-  const loaddashboard = async (req, res) => {
+  const   loaddashboard = async (req, res) => {
     try {
+     
       const ordersData = await calculateDeliveredOrderTotal()
       console.log(ordersData,"get dashBorde rsData")
       const orders = ordersData[0]
@@ -469,7 +470,7 @@ async function calculateDeliveredOrderTotal() {
          console.log("categoryCount:", categoryCount);
         console.log("onlinePay.totalPriceSum:", onlinePay[0]?.totalPriceSum);
         console.log("onlinePay.count:", onlinePay[0]?.count);
-      console.log('uasername', latestorders)
+      // console.log('uasername', latestorders)
   
       res.render('dashboard', {
         orders, productsCount, categoryCount,
@@ -522,6 +523,8 @@ async function calculateDeliveredOrderTotal() {
     }
   }
 
+  
+
 module.exports = {
     loadLogin,
     verifyLogin ,
@@ -532,9 +535,7 @@ module.exports = {
     orderListing,
     updateStatus,
     Logout,
-
     addrefferalmoneypag,
-  
     loaddashboard,
     addrefferalmoney
 

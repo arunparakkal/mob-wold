@@ -74,6 +74,15 @@
     
       }
     </style>
+    <style>
+      /* Styles remain the same */
+      .no-coupons-message {
+        text-align: center;
+        color: #555;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+    </style>
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option">
         <div class="container">
@@ -91,22 +100,20 @@
 
 
 <!-- Coupons -->
-<% coupons.forEach(function(coupon) { %>
-  <div class="coupon-card">
-    <h3>
-      <%= coupon.description %>
-    </h3>
-    <div class="coupon-row">
-      <span id="cpnCode">
-        <%= coupon.couponCode %>
-      </span>
-      <span class="cpnBtn" data-coupon-code="<%= coupon.couponCode %>"
-        data-min-amount="<%= coupon.minAmount %>">Apply</span>
+<% if (coupons.length > 0) { %>
+  <% coupons.forEach(function(coupon) { %>
+    <div class="coupon-card">
+      <h3><%= coupon.description %></h3>
+      <div class="coupon-row">
+        <span id="cpnCode"><%= coupon.couponCode %></span>
+        <span class="cpnBtn" data-coupon-code="<%= coupon.couponCode %>" data-min-amount="<%= coupon.minAmount %>">Apply</span>
+      </div>
+      <p>Valid until: <%= coupon.expirationDate.toDateString() %></p>
     </div>
-    <p>Valid until: <%= coupon.expirationDate.toDateString() %>
-    </p>
-  </div>
   <% }); %>
+<% } else { %>
+  <p class="no-coupons-message">No coupons are available at the moment. Check back later for exclusive offers!</p>
+<% } %>
     <input type="hidden" id="currentPurchaseAmount" value="<%= calculateTotalPrice %>">
 
      

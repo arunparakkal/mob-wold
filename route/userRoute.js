@@ -48,8 +48,8 @@ userRoute.get('/otp',auth.isLogout,UserController.otppage)
 userRoute.get("/logout",auth.isLogin,UserController.Logout)
 
 userRoute.get("/register",auth.isLogout,UserController.loadsignUp)
-userRoute.post("/register",UserController.inserUser)
-userRoute.get("/recentopt",auth.isLogout,UserController.recentOpt)
+userRoute.post("/register",auth.isLogout,UserController.inserUser)
+userRoute.get("/recentotp",auth.isLogout,UserController.recentOpt)
 
 userRoute.get("/shop",auth.isLogin,UserController.loadShop)
 userRoute.get('/productdetail',auth.isLogin,ProductController.productDetail)
@@ -88,6 +88,9 @@ userRoute.post("/walletrecharge",auth.isLogin,UserController.Walletrecharge)
 userRoute.get("/wallethistory",auth.isLogin,UserController.walletHistory)
 userRoute.get("/404-page",auth.isLogin,UserController.errorpage)
 userRoute.post("/search",auth.isLogin,UserController.search)
+
+
+
 
 
 

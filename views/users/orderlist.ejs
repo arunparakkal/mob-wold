@@ -92,10 +92,11 @@
                                         </td>
                                         <td class="order__item__products">
                                             <% orderItem.products.forEach((product) => { %>
+                                             
                                                 <div class="order__product">
-                                                    <img src="/uploadProduct/<%= product.productId.image[0] %>" alt="<%= product.productId.productname %>">
+                                                    <img src="/uploadProduct/<%= product.productId?.image[0] %>" alt="">
                                                     <div class="order__product__title">
-                                                        <h6><%= product.productId.productname %></h6>
+                                                        <h6><%= product.productId?.productname %></h6>
                                                         <p>Quantity: <%= product.quantity %></p>
                                                         <p>&#8377;<%= product.price %></p>
                                                     </div>

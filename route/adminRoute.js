@@ -92,4 +92,6 @@ admin_route.post('/deleteeditproduct', auth.isLogin,productController.deteEditep
 
 admin_route.get("/salesreport", auth.isLogin,dashBoardReportController.salesReport)
 admin_route.get('/reports/sales/download/:type',auth.isLogin, dashBoardReportController.adminDownloadReports);
+
+
 module.exports = admin_route
