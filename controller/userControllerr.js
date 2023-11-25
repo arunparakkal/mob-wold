@@ -72,7 +72,7 @@ const sendVerifyMail = async (name, email, otp) => {
 }
 const LoadHome = async (req, res) => {
     try {
-        const products = await product.find({ isListed: true })
+        const products = await product.find({ isListed: true }).limit(4);
 
         res.render("users/home", { products });
 
