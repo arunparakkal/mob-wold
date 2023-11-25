@@ -95,7 +95,7 @@ const Logout = async (req, res) => {
 const LoadHomee = async (req, res) => {
     try {
 
-        const products = await product.find({ isListed: true })
+        const products = await product.find({ isListed: true }).limit(4)
         const Id = req.session.user_id
 
         const userData = await User.findOne({ _id: Id });
@@ -166,15 +166,17 @@ const inserUser = async (req, res) => {
 }
 const recentOpt = async (req, res) => {
     try {
-        const userId = req.query.userId.trim();
-        console.log(userId, req.query.userId);
+      const data = req.session.registerData
+      
+       
         const otp = randomString.generate({ length: 4, charset: "numeric" })
         objj.OTP = otp
         console.log("recent", objj.OTP);
-        await sendVerifyMail(req.body.name, req.body.email, otp)
-        const userData = await User.findOne({ _id: userId });
-        console.log("user",userData);
-        res.redirect(`otp?id=${userData._id}`);
+        console.log("name",data);
+        await sendVerifyMail(data.name, data.email, otp)
+       
+        console.log("user",data);
+        res.redirect(`otp?id=${data._id}`);
     }
     catch (error) {
         console.log(error.message);
@@ -216,7 +218,7 @@ const VerifyOtp = async (req, res) => {
             if (newUser) {
                 const userData = await newUser.save()
                 if (userData) {
-                    delete req.session.registerData
+                    // delete req.session.registerData
                 } else {
                     console.log("registeration failed");
                 }
