@@ -72,7 +72,7 @@ admin_route.post('/editcoupon/:id',auth.isLogin,couponController.editCoupon)
 admin_route.post('/unListCoupon', auth.isLogin,couponController.unListCoupon);
 admin_route.post('/listCoupon', auth.isLogin,couponController.listCoupon);
 
-
+    
 
 admin_route.get('/orders',auth.isLogin,adminController.orderListing)
 admin_route.get('/order/:orderId',auth.isLogin,adminController.orderDetailView)
